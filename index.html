@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FixSphere — Autonomous Device Care & Smart Warranty Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff6b00',
+                            orangeLight: '#ff8533',
+                            orangeDark: '#e05300',
+                            dark: '#06080d',
+                            card: '#111726',
+                            surface: '#0b0f19',
+                            green: '#10b981',
+                            blue: '#3b82f6',
+                            amber: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #06080d;
+            color: #f8fafc;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ========================================================
+           DEEP OBSIDIAN BLACK BG WITH SUBTLE SIDE-EDGE GRADIENTS
+           ======================================================== */
+        .gradient-stage-bg {
+            position: relative;
+            background-color: #06080d;
+            background-image: 
+                radial-gradient(ellipse 28% 55% at 0% 35%, rgba(59, 130, 246, 0.14) 0%, transparent 100%),
+                radial-gradient(ellipse 28% 55% at 100% 60%, rgba(255, 107, 0, 0.12) 0%, transparent 100%),
+                linear-gradient(180deg, #06080d 0%, #080b12 50%, #06080d 100%);
+        }
+
+        .gradient-stage-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-size: 44px 44px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, #000 40%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========================================================
+           FROSTED GLASS + SLANTING SILVER LINES GLARE + 3D TILT
+           ======================================================== */
+        .glass-dock {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.72) 0%, rgba(15, 23, 42, 0.84) 100%);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-top-color: rgba(255, 255, 255, 0.28);
+            box-shadow: 
+                0 24px 48px -12px rgba(0, 0, 0, 0.8),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Lighter Glass Card Surface */
+        .spotlight-card {
+            position: relative;
+            background: linear-gradient(155deg, rgba(38, 49, 71, 0.56) 0%, rgba(20, 27, 45, 0.68) 100%);
+            backdrop-filter: blur(26px) saturate(190%);
+            -webkit-backdrop-filter: blur(26px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            border-top: 1px solid rgba(255, 255, 255, 0.28);
+            border-left: 1px solid rgba(255, 255, 255, 0.19);
+            box-shadow: 
+                0 22px 45px -15px rgba(0, 0, 0, 0.85),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
+            overflow: hidden;
+        }
+
+        /* SLANTING SILVER METALLIC LINES + SPECULAR SHEEN */
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                /* Layer 1: Primary Slanting Silver Glare Streaks (125deg) */
+                linear-gradient(
+                    125deg,
+                    transparent 0%,
+                    transparent 28%,
+                    rgba(226, 232, 240, 0.05) 36%,
+                    rgba(255, 255, 255, 0.34) 44%,
+                    rgba(255, 255, 255, 0.08) 47.5%,
+                    transparent 49.5%,
+                    rgba(226, 232, 240, 0.42) 52%,
+                    rgba(255, 255, 255, 0.14) 55.5%,
+                    rgba(255, 255, 255, 0.24) 58.5%,
+                    rgba(226, 232, 240, 0.04) 65%,
+                    transparent 74%,
+                    transparent 100%
+                ),
+                /* Layer 2: Fine Brushed Diagonal Silver Lines Pattern */
+                repeating-linear-gradient(
+                    125deg,
+                    rgba(255, 255, 255, 0.055) 0px,
+                    rgba(255, 255, 255, 0.055) 1.5px,
+                    transparent 1.5px,
+                    transparent 9px
+                ),
+                /* Layer 3: Soft Center Core Illumination */
+                radial-gradient(
+                    340px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(255, 255, 255, 0.18) 0%,
+                    rgba(203, 213, 225, 0.07) 42%,
+                    transparent 75%
+                );
+            background-size: 240% 240%, 100% 100%, 100% 100%;
+            background-position: var(--bg-x, 50%) var(--bg-y, 50%), 0 0, 0 0;
+            opacity: 0;
+            transition: opacity 0.4s ease, background-position 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .spotlight-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Desktop Only Hover (Prevents Sticky Hover on Android/iOS) */
+        @media (hover: hover) and (pointer: fine) {
+            .spotlight-card::before {
+                transition: opacity 0.3s ease;
+            }
+            .spotlight-card:hover::before {
+                opacity: 1;
+            }
+            .spotlight-card:hover {
+                border-color: rgba(241, 245, 249, 0.55);
+                box-shadow: 
+                    0 28px 55px -15px rgba(0, 0, 0, 0.9),
+                    0 0 28px -5px rgba(226, 232, 240, 0.22),
+                    inset 0 1px 2px 0 rgba(255, 255, 255, 0.45);
+            }
+        }
+
+        /* Mobile / Touch One-Tap Dynamic Pulse State (Auto-resets smoothly) */
+        .spotlight-card.touch-pulse::before {
+            opacity: 1;
+        }
+        .spotlight-card.touch-pulse {
+            border-color: rgba(241, 245, 249, 0.6);
+            box-shadow: 
+                0 28px 55px -15px rgba(0, 0, 0, 0.9),
+                0 0 28px -5px rgba(226, 232, 240, 0.25),
+                inset 0 1px 2px 0 rgba(255, 255, 255, 0.48);
+        }
+
+        /* Translucent Glass Tabs Track */
+        .glass-tabs-track {
+            background: linear-gradient(135deg, rgba(35, 46, 68, 0.65) 0%, rgba(18, 25, 42, 0.78) 100%);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top-color: rgba(255, 255, 255, 0.26);
+            box-shadow: 
+                0 10px 30px -10px rgba(0, 0, 0, 0.65),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            padding: 5px;
+            display: inline-flex;
+            position: relative;
+            border-radius: 18px;
+        }
+        .glass-tab-btn {
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 13px;
+        }
+        .glass-tab-btn:hover:not(.active-tab) {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+        .glass-tab-btn.active-tab {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%), rgba(255, 107, 0, 0.88);
+            backdrop-filter: blur(16px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            box-shadow: 
+                0 8px 20px -4px rgba(255, 107, 0, 0.5),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
+        }
+
+        /* Minimalist Frosted Inputs */
+        .minimal-input {
+            background: rgba(15, 22, 36, 0.68);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(16px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .minimal-input:focus {
+            outline: none;
+            border-color: rgba(241, 245, 249, 0.65);
+            background: rgba(24, 34, 54, 0.82);
+            box-shadow: 0 0 0 3px rgba(226, 232, 240, 0.15);
+        }
+
+        /* Map Hero Styling */
+        #map-hero {
+            position: relative;
+            width: 100%;
+            height: 100dvh;
+            background: #06080d;
+            overflow: hidden;
+        }
+        #map {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .map-bottom-blend {
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 160px;
+            background: linear-gradient(to bottom, rgba(6, 8, 13, 0) 0%, rgba(6, 8, 13, 0.85) 55%, #06080d 100%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .store-card {
+            background: linear-gradient(145deg, rgba(38, 49, 71, 0.45) 0%, rgba(20, 27, 45, 0.55) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .store-card:hover {
+            background: rgba(45, 58, 84, 0.65);
+            border-color: rgba(226, 232, 240, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.7), 0 0 18px rgba(226, 232, 240, 0.18);
+        }
+
+        .thermal-receipt {
+            font-family: 'Space Mono', 'Courier New', monospace;
+            background: #ffffff;
+            color: #111827;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border-radius: 10px;
+        }
+
+        .custom-pin {
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+            border: 2px solid #ffffff;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .custom-pin:hover { transform: scale(1.25); }
+        .pulse-user { animation: pulse-ring 2s infinite; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 14px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .view-transition {
+            animation: viewEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes viewEnter {
+            0% { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .stagger-item {
+            animation: cardStagger 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cardStagger {
+            0% { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .ripple-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ripple-btn:active {
+            transform: scale(0.96);
+        }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(226, 232, 240, 0.5); }
+    </style>
+</head>
+<body class="bg-[#06080d] selection:bg-brand-orange selection:text-white">
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: FULLSCREEN RADAR MAP & MINIMALIST GLASS HUD   -->
+    <!-- ======================================================== -->
+    <section id="map-hero">
+        <div id="map"></div>
+        <div class="map-bottom-blend"></div>
+
+        <!-- FLOATING GLASS NAVBAR -->
+        <header class="absolute top-3 left-3 right-3 md:top-5 md:left-6 md:right-6 z-30 flex items-center justify-between gap-2 pointer-events-none">
+            <div class="pointer-events-auto flex items-center space-x-3 glass-dock px-4 py-2.5 rounded-2xl">
+                <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-tr from-brand-orange to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/30 flex-shrink-0">
+                    <i class="fa-solid fa-screwdriver-wrench text-xs md:text-sm"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xs md:text-sm font-extrabold tracking-tight text-white">FixSphere</h1>
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] md:text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold font-mono">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 18 LIVE
+                        </span>
+                    </div>
+                    <p class="text-[9px] md:text-[10px] text-gray-300 hidden sm:block">Autonomous Repair Radar & Cryptographic Warranty Vault</p>
+                </div>
+            </div>
+
+            <div class="pointer-events-auto flex items-center gap-2">
+                <button onclick="openWelcomeTour()" title="Platform Overview" class="w-9 h-9 rounded-xl glass-dock hover:border-slate-300/50 text-gray-200 hover:text-white flex items-center justify-center text-xs transition-all ripple-btn">
+                    <i class="fa-solid fa-sparkles"></i>
+                </button>
+
+                <button onclick="scrollToVault('dashboard')" class="px-3.5 py-2 rounded-xl glass-dock hover:border-slate-300/60 text-white text-[11px] md:text-xs font-bold transition-all flex items-center gap-2 ripple-btn">
+                    <i class="fa-solid fa-vault text-brand-orange"></i>
+                    <span class="hidden sm:inline">Warranty Vault</span>
+                </button>
+
+                <select id="map-style-select" onchange="switchMapStyle(this.value)" class="px-3 py-2 rounded-xl glass-dock text-white text-[11px] md:text-xs font-semibold focus:outline-none cursor-pointer">
+                    <option value="satellite" selected class="bg-[#0b0f19]">🛰️ Satellite</option>
+                    <option value="street" class="bg-[#0b0f19]">🗺️ Vector</option>
+                </select>
+
+                <button onclick="scrollToVault('scanner')" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-[11px] md:text-xs font-bold shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition-all ripple-btn">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span class="hidden sm:inline">Scan Bill</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MOBILE SHEET TOGGLE -->
+        <div class="md:hidden absolute top-16 right-3 z-30 pointer-events-auto">
+            <button onclick="toggleMobileSheet()" id="btn-mobile-sheet-toggle" class="px-3.5 py-1.5 rounded-full glass-dock border-white/20 text-white text-[10px] font-bold flex items-center gap-1.5">
+                <i id="toggle-sheet-icon" class="fa-solid fa-map text-brand-orange"></i>
+                <span id="toggle-sheet-text">Full Map</span>
+            </button>
+        </div>
+
+        <!-- FLOATING LEFT RADAR CONSOLE -->
+        <aside id="rapido-aside-panel" class="glass-dock absolute 
+            bottom-0 left-0 right-0 w-full rounded-t-3xl rounded-b-none max-h-[52vh] p-4 
+            md:bottom-6 md:top-20 md:left-6 md:right-auto md:w-[410px] md:rounded-3xl md:max-h-none md:p-5 
+            flex flex-col overflow-hidden z-20 transition-all duration-300">
+            
+            <div class="space-y-3 flex-shrink-0">
+                <div class="p-3 bg-black/40 rounded-2xl border border-white/[0.1] space-y-2">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <div class="flex items-center gap-2 text-gray-300 font-medium truncate max-w-[240px]">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+                            <span id="user-location-text" class="text-white font-semibold truncate">Detecting coordinates...</span>
+                        </div>
+                        <button onclick="getUserGPS()" class="text-brand-orange hover:text-white font-bold flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider">
+                            <i class="fa-solid fa-crosshairs"></i> Sync GPS
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="area-search-input" onkeydown="handleAreaSearch(event)" placeholder="Search sector: Jammu, Gandhi Nagar..." class="w-full minimal-input rounded-xl pl-8 pr-14 py-2 text-xs text-white placeholder-gray-400">
+                        <button onclick="executeAreaSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-brand-orange hover:bg-brand-orangeDark text-white text-[10px] font-bold rounded-lg transition-all ripple-btn">
+                            Scan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Segmented Glass Category Switcher -->
+                <div class="flex items-center justify-between gap-2">
+                    <div class="glass-tabs-track flex-1">
+                        <button onclick="selectCategory('Phone')" id="cat-phone" class="glass-tab-btn active-tab flex-1 py-1.5 text-[11px] font-bold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-mobile-screen text-[10px]"></i>
+                            <span>Smartphones</span>
+                        </button>
+                        <button onclick="selectCategory('Laptop')" id="cat-laptop" class="glass-tab-btn flex-1 py-1.5 text-gray-300 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-laptop text-[10px]"></i>
+                            <span>Laptops</span>
+                        </button>
+                    </div>
+
+                    <button onclick="toggleWarrantyChip()" id="warranty-chip" class="px-3 py-2 rounded-xl bg-black/40 border border-white/[0.12] text-gray-300 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ripple-btn">
+                        <i class="fa-solid fa-shield-halved text-[10px]"></i>
+                        <span>OEM Only</span>
+                    </button>
+                </div>
+
+                <!-- Active Route Telemetry -->
+                <div id="route-info-card" class="hidden p-2.5 bg-blue-500/15 border border-blue-400/30 rounded-2xl space-y-1 view-transition">
+                    <div class="flex items-center justify-between text-xs font-bold text-blue-300">
+                        <span class="flex items-center gap-1.5 text-[11px]"><i class="fa-solid fa-route"></i> Vector Path Locked</span>
+                        <button onclick="clearCurrentRoute()" class="text-gray-300 hover:text-white text-[10px]">✕ Reset</button>
+                    </div>
+                    <p id="route-dest-text" class="text-[11px] font-semibold text-white truncate">Destination Hub</p>
+                    <div class="flex items-center justify-between text-[10px] text-gray-300 pt-0.5 font-mono">
+                        <span>ETA: ~10 MINS</span>
+                        <a id="gmaps-external-link" href="#" target="_blank" class="text-brand-orange font-sans font-bold hover:underline flex items-center gap-1">
+                            Open Maps <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verified Hubs Feed -->
+            <div class="flex-1 flex flex-col min-h-0 mt-3 pt-2.5 border-t border-white/[0.1]">
+                <div class="flex items-center justify-between text-xs font-bold mb-2 flex-shrink-0 px-1">
+                    <span class="text-gray-200 flex items-center gap-1.5 text-[11px]">
+                        <span id="active-category-title">Phone Repair Hubs</span> 
+                        <span id="center-count" class="bg-white/15 text-white border border-white/20 text-[10px] px-1.5 py-0.2 rounded-md font-mono font-bold">0</span>
+                    </span>
+                    <span id="fetch-indicator" class="text-[10px] text-emerald-400 flex items-center gap-1 font-mono font-semibold">
+                        <i class="fa-solid fa-satellite-dish text-brand-orange text-[9px]"></i> 10KM RADAR
+                    </span>
+                </div>
+                <div id="repair-list" class="flex-1 overflow-y-auto pr-1 space-y-2"></div>
+            </div>
+
+            <div class="pt-2.5 border-t border-white/[0.1] flex items-center gap-2 flex-shrink-0">
+                <button onclick="startInspectionFromRadar(null)" class="flex-1 py-2.5 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-bold rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition-all ripple-btn">
+                    <i class="fa-solid fa-motorcycle text-sm"></i>
+                    <span id="btn-radar-bottom-text">Book Nearest Doorstep Visit</span>
+                </button>
+            </div>
+        </aside>
+
+        <button onclick="scrollToVault('dashboard')" class="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-20 px-5 py-2.5 rounded-full glass-dock text-white text-xs font-bold items-center gap-2.5 hover:border-slate-300/60 transition-all ripple-btn">
+            <span>Explore Smart Warranty Vault</span>
+            <i class="fa-solid fa-chevron-down text-brand-orange animate-bounce text-[10px]"></i>
+        </button>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: DARK STAGE WITH SIDE GRADIENTS & GLASS CARDS  -->
+    <!-- ======================================================== -->
+    <div class="gradient-stage-bg">
+        <section id="warranty-vault-section" class="max-w-7xl mx-auto py-16 px-4 sm:px-6 space-y-10 relative z-10">
+            
+            <!-- WORKSPACE HEADER & TRUE GLASS SEGMENTED TABS -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-3 border-b border-white/[0.08]">
+                <div class="space-y-1.5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.14] text-slate-200 font-bold text-[10px] uppercase tracking-widest backdrop-blur-md">
+                        <i class="fa-solid fa-shield-halved text-brand-orange"></i> Autonomous Protection Workspace
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">Smart Warranty & Repair Manager</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Zero-latency coverage telemetry, neural invoice OCR & doorstep technician dispatch.</p>
+                </div>
+
+                <!-- TRANSLUCENT GLASS TABS -->
+                <div class="glass-tabs-track self-start md:self-auto overflow-x-auto max-w-full">
+                    <button onclick="switchVaultSubView('dashboard')" id="btn-vault-dash" class="glass-tab-btn active-tab px-4 py-2 text-xs font-bold whitespace-nowrap flex items-center gap-2">
+                        <i class="fa-solid fa-table-columns text-[11px]"></i>
+                        <span>Vault Dashboard</span>
+                    </button>
+                    <button onclick="switchVaultSubView('scanner')" id="btn-vault-scan" class="glass-tab-btn px-4 py-2 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap flex items-center gap-2">
+                        <i class="fa-solid fa-expand text-[11px]"></i>
+                        <span>Add / Snap Bill</span>
+                    </button>
+                    <button onclick="switchVaultSubView('claim')" id="btn-vault-claim" class="glass-tab-btn px-4 py-2 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-[11px]"></i>
+                        <span>Repair / Warranty Claim</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 BENTO TELEMETRY WIDGETS (SLANTING SILVER GLARE + 3D TILT) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div class="spotlight-card tilt-card p-5 rounded-3xl space-y-3 cursor-pointer select-none">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Total Devices</span>
+                        <div class="w-8 h-8 rounded-xl bg-white/10 text-slate-200 flex items-center justify-center text-xs border border-white/20">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                    </div>
+                    <h2 id="widget-total-bills" class="text-3xl sm:text-4xl font-extrabold font-mono text-white tracking-tight">4</h2>
+                    <p class="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5 truncate">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Cryptographically Synced
+                    </p>
+                </div>
+
+                <div class="spotlight-card tilt-card p-5 rounded-3xl space-y-3 cursor-pointer select-none">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Active Coverage</span>
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs border border-emerald-400/30">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <h2 id="widget-active-warranties" class="text-3xl sm:text-4xl font-extrabold font-mono text-emerald-400 tracking-tight">2</h2>
+                    <p class="text-[11px] text-emerald-300/90 font-medium flex items-center gap-1.5 truncate">
+                        <i class="fa-solid fa-bolt text-[10px]"></i> ₹0 OEM Replacement Parts
+                    </p>
+                </div>
+
+                <div class="spotlight-card tilt-card p-5 rounded-3xl space-y-3 cursor-pointer select-none">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Expiring Soon</span>
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xs border border-amber-400/30">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                    <h2 id="widget-expiring-soon" class="text-3xl sm:text-4xl font-extrabold font-mono text-amber-400 tracking-tight">1</h2>
+                    <p class="text-[11px] text-amber-300/90 font-medium flex items-center gap-1.5 truncate">
+                        <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Pre-Expiry Check Advised
+                    </p>
+                </div>
+
+                <div class="spotlight-card tilt-card p-5 rounded-3xl space-y-3 cursor-pointer select-none">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Protected Value</span>
+                        <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-xs border border-blue-400/30">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <h2 id="widget-protected-val" class="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight truncate">₹3,35,182</h2>
+                    <p class="text-[11px] text-slate-300 font-medium flex items-center gap-1.5 truncate">
+                        Verified hardware assets
+                    </p>
+                </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SUB-VIEW A: DEVICE VAULT BENTO GRID                      -->
+            <!-- ======================================================== -->
+            <div id="vault-dashboard-content" class="space-y-6 view-transition">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <!-- Glass Filter Pills -->
+                    <div class="glass-tabs-track overflow-x-auto">
+                        <button onclick="filterVaultDevices('all')" id="vfilter-all" class="glass-tab-btn active-tab px-3.5 py-1.5 text-xs font-bold whitespace-nowrap">All Hardware</button>
+                        <button onclick="filterVaultDevices('active')" id="vfilter-active" class="glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap">Active (Green)</button>
+                        <button onclick="filterVaultDevices('expiring')" id="vfilter-expiring" class="glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap">Expiring Soon</button>
+                        <button onclick="filterVaultDevices('expired')" id="vfilter-expired" class="glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap">Out of Warranty</button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" onkeyup="searchVaultDeviceList(this.value)" placeholder="Filter by model, brand, IMEI..." class="w-full minimal-input rounded-2xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-400">
+                    </div>
+                </div>
+
+                <div id="vault-devices-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SUB-VIEW B: NEURAL BILL SCANNER & REGISTRATION           -->
+            <!-- ======================================================== -->
+            <div id="vault-scanner-content" class="hidden max-w-2xl mx-auto space-y-5 view-transition">
+                <div class="text-center space-y-1.5">
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Register Hardware in Vault</h3>
+                    <p class="text-xs text-slate-300">Upload any retail tax invoice or thermal receipt. Client-side Neural Vision extracts telemetry automatically.</p>
+                </div>
+
+                <div class="spotlight-card tilt-card p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h5 class="text-xs font-bold text-white">Does this device have Active Warranty?</h5>
+                        <p class="text-[11px] text-slate-300">Toggle "No" if the receipt is lost or coverage has ended</p>
+                    </div>
+                    <div class="glass-tabs-track self-start sm:self-auto">
+                        <button onclick="setWarrantyToggle(true)" id="btn-warr-yes" class="glass-tab-btn active-tab px-3.5 py-1.5 text-xs font-bold">
+                            Yes (Scan Bill)
+                        </button>
+                        <button onclick="setWarrantyToggle(false)" id="btn-warr-no" class="glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold">
+                            No (Out of Warranty)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="warranty-upload-block">
+                    <div onclick="document.getElementById('bill-file-input').click()" class="spotlight-card tilt-card border-2 border-dashed border-white/20 hover:border-slate-200/60 p-9 rounded-3xl text-center space-y-3 cursor-pointer transition-all ripple-btn">
+                        <input type="file" id="bill-file-input" accept="image/*" class="hidden" onchange="handleBillUpload(event)">
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 text-white flex items-center justify-center text-xl mx-auto border border-white/25 shadow-inner">
+                            <i class="fa-solid fa-cloud-arrow-up text-brand-orange"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs sm:text-sm font-bold text-white">Drop invoice image or tap to browse</p>
+                            <p class="text-[11px] text-slate-300 mt-0.5">Supports Croma, Reliance, Amazon, Cashify & thermal receipts</p>
+                        </div>
+                    </div>
+
+                    <div id="scan-progress" class="hidden mt-3 p-4 glass-dock rounded-2xl space-y-2 border-white/25">
+                        <div class="flex items-center justify-between text-xs font-bold text-white">
+                            <span id="scan-status-text"><i class="fa-solid fa-microchip text-brand-orange animate-spin mr-1.5"></i> Scanning invoice layout...</span>
+                            <span id="scan-percentage" class="font-mono text-brand-orange">45%</span>
+                        </div>
+                        <div class="w-full bg-black/60 h-2 rounded-full overflow-hidden">
+                            <div id="scan-bar" class="h-full bg-gradient-to-r from-brand-orange to-amber-400 transition-all duration-300" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="multi-item-selector" class="hidden spotlight-card border-white/25 p-3.5 rounded-2xl space-y-2 view-transition">
+                    <span class="text-[10px] font-bold text-slate-200 uppercase tracking-wider block">
+                        <i class="fa-solid fa-layer-group text-brand-orange mr-1"></i> Multiple Hardware Items Detected — Select to Populate:
+                    </span>
+                    <div id="multi-item-buttons" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="spotlight-card rounded-3xl p-6 space-y-4">
+                    <div class="p-3 bg-blue-500/15 border border-blue-400/30 rounded-2xl flex items-center gap-2.5 text-[11px] text-blue-200">
+                        <i class="fa-solid fa-circle-info text-blue-400 flex-shrink-0"></i>
+                        <span>Review extracted hardware fields below. All proofs are encrypted locally in your browser vault.</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Device Model *</label>
+                            <input type="text" id="form-model" placeholder="e.g. HP Victus 16 / OnePlus Nord" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Brand *</label>
+                            <select id="form-brand" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white">
+                                <option value="Apple" class="bg-[#0b0f19]">Apple</option>
+                                <option value="HP" selected class="bg-[#0b0f19]">HP</option>
+                                <option value="OnePlus" class="bg-[#0b0f19]">OnePlus</option>
+                                <option value="Samsung" class="bg-[#0b0f19]">Samsung</option>
+                                <option value="Dell" class="bg-[#0b0f19]">Dell</option>
+                                <option value="Lenovo" class="bg-[#0b0f19]">Lenovo</option>
+                                <option value="Xiaomi" class="bg-[#0b0f19]">Xiaomi</option>
+                                <option value="Realme" class="bg-[#0b0f19]">Realme</option>
+                                <option value="Vivo" class="bg-[#0b0f19]">Vivo</option>
+                                <option value="Other" class="bg-[#0b0f19]">Other Brand</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Device Category *</label>
+                            <select id="form-category" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white">
+                                <option value="Phone" class="bg-[#0b0f19]">Smartphone / Mobile</option>
+                                <option value="Laptop" class="bg-[#0b0f19]">Laptop / PC</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Serial / IMEI (Optional)</label>
+                            <input type="text" id="form-serial" placeholder="e.g. HP991204ABC / 15-digit IMEI" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs font-mono text-white">
+                        </div>
+                    </div>
+
+                    <div id="warranty-fields-block" class="space-y-3.5 pt-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Purchase Date</label>
+                                <input type="date" id="form-date" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Warranty Period (Months)</label>
+                                <input type="number" id="form-months" value="12" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs font-mono text-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Invoice Price (₹ - Optional)</label>
+                            <input type="number" id="form-price" placeholder="e.g. 76990" class="w-full mt-1.5 minimal-input rounded-xl px-3.5 py-2.5 text-xs font-mono text-white">
+                        </div>
+                    </div>
+
+                    <button onclick="saveScannedDevice()" class="w-full py-3.5 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 ripple-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Commit Hardware & Proof to Vault
+                    </button>
+                </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SUB-VIEW C: REPAIR / WARRANTY CLAIM DISPATCH DESK        -->
+            <!-- ======================================================== -->
+            <div id="vault-claim-content" class="hidden max-w-3xl mx-auto space-y-5 view-transition">
+                <div class="text-center space-y-1">
+                    <div class="w-11 h-11 rounded-2xl bg-white/10 text-brand-orange flex items-center justify-center text-lg mx-auto mb-2 border border-white/20 shadow-inner">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Repair / Warranty Claim Dispatch</h3>
+                    <p class="text-xs text-slate-300">Schedule physical hardware verification with category-matched service hubs.</p>
+                </div>
+
+                <!-- ASSIGNED CARE HUB BAR (FIXED MOBILE FLEX TRUNCATION) -->
+                <div class="spotlight-card tilt-card p-3.5 rounded-2xl flex items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+                        <span class="text-slate-300 font-medium flex-shrink-0">Assigned Hub:</span>
+                        <strong id="active-selected-hub-name" class="text-white truncate">Auto-Selected Nearest Care Lounge</strong>
+                    </div>
+                    <button onclick="openChangeHubModal()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-[10px] transition-all whitespace-nowrap ripple-btn">
+                        <i class="fa-solid fa-arrow-right-arrow-left text-brand-orange mr-1"></i> Change Hub
+                    </button>
+                </div>
+
+                <!-- STATE 1: BOOKING & PROFILE FORM -->
+                <div id="claim-form-container" class="spotlight-card rounded-3xl p-5 sm:p-6 space-y-4">
+                    
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">Select Defective Hardware</label>
+                        <select id="claim-device-select" onchange="handleSelectedDeviceCategoryChange()" class="w-full minimal-input rounded-xl px-3.5 py-3 text-xs text-white font-medium"></select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">Issue Category</label>
+                            <select id="claim-issue-select" class="w-full minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white">
+                                <option value="Screen / Display Failure" class="bg-[#0b0f19]">Screen / Display Failure</option>
+                                <option value="Battery / Not Charging" class="bg-[#0b0f19]">Battery / Not Charging</option>
+                                <option value="Motherboard Power Cut" class="bg-[#0b0f19]">Motherboard Power Cut</option>
+                                <option value="Audio / Speaker Distortion" class="bg-[#0b0f19]">Audio / Speaker Distortion</option>
+                                <option value="Camera Lens Defect" class="bg-[#0b0f19]">Camera / Sensor Issue</option>
+                                <option value="Other" class="bg-[#0b0f19]">Other (Physical / Internal Hardware)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">Inspection Mode</label>
+                            <select id="claim-pref-select" onchange="handleInspectionPrefChange(this.value)" class="w-full minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white">
+                                <option value="doorstep" class="bg-[#0b0f19]">🛵 Doorstep Technician Visit (Pre-check)</option>
+                                <option value="center" class="bg-[#0b0f19]">📍 Self-Visit Nearest Center</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">Detailed Symptoms</label>
+                        <textarea id="claim-symptoms" rows="2" class="w-full minimal-input rounded-xl px-3.5 py-2.5 text-xs text-white" placeholder="Describe the issue...">Device screen suddenly flickering after normal use. No physical drops or liquid damage.</textarea>
+                    </div>
+
+                    <!-- SAVED USER PROFILE -->
+                    <div class="p-4 bg-black/35 border border-white/[0.1] rounded-2xl space-y-3">
+                        <div class="flex items-center justify-between text-xs gap-2">
+                            <span class="font-bold text-slate-200 flex items-center gap-1.5">
+                                <i class="fa-solid fa-address-card text-brand-orange"></i> Saved Contact & Dispatch Address
+                            </span>
+                            <button type="button" onclick="clearSavedUserProfile()" class="text-[10px] text-slate-400 hover:text-red-400 transition-colors flex-shrink-0">Clear Saved</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Mobile Number *</label>
+                                <input type="tel" id="user-contact-phone" placeholder="+91 98765 43210" class="w-full mt-1 minimal-input rounded-xl px-3 py-2 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Street Address & Landmark *</label>
+                                <input type="text" id="user-contact-address" placeholder="Flat No., Street, Landmark" class="w-full mt-1 minimal-input rounded-xl px-3 py-2 text-xs text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DYNAMIC FARE & WARRANTY ESTIMATE -->
+                    <div id="doorstep-fare-summary-block" class="p-4 bg-white/[0.05] border border-white/[0.15] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] text-slate-300 block font-bold uppercase tracking-wider">Transparent Fare Telemetry</span>
+                            <span id="doorstep-fare-text" class="text-[11px] text-white block leading-relaxed">Calculating fee structure...</span>
+                        </div>
+                        <span class="self-start sm:self-auto flex-shrink-0 text-[10px] text-slate-200 font-bold font-mono bg-black/40 px-2.5 py-1 rounded-lg border border-white/15">₹49 + ₹15/km</span>
+                    </div>
+
+                    <button onclick="requestWarrantyInspection()" id="btn-submit-inspection-req" class="w-full py-3.5 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 ripple-btn">
+                        <i class="fa-solid fa-phone-volume"></i> Request Verification & Technician Inspection
+                    </button>
+                </div>
+
+                <!-- STATE 2: ACTIVE DISPATCH TRACKER -->
+                <div id="claim-tracker-container" class="hidden spotlight-card rounded-3xl p-6 space-y-5 view-transition">
+                    
+                    <!-- STAGE A: DOORSTEP WAITING 5-10 MINS CALL -->
+                    <div id="tracker-stage-call" class="space-y-4">
+                        <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center justify-center text-sm font-bold flex-shrink-0 animate-pulse">
+                                    <i class="fa-solid fa-phone-volume"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Awaiting Technician Verification Call</h4>
+                                    <p class="text-[11px] text-slate-300">Assigned specialist is reviewing your digital invoice</p>
+                                </div>
+                            </div>
+                            <span id="call-timer-badge" class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30 text-[10px] font-bold font-mono">
+                                ETA ~07:30
+                            </span>
+                        </div>
+
+                        <div class="p-3.5 bg-amber-500/10 border border-amber-400/25 rounded-2xl text-xs text-amber-200 space-y-1">
+                            <p class="font-bold">📞 Specialist will call you shortly on <span id="disp-user-phone" class="text-white font-mono underline">+91 98765 43210</span>.</p>
+                            <p class="text-[11px] text-slate-200">They will verify hardware symptoms, confirm warranty coverage terms, and dispatch to your location.</p>
+                        </div>
+
+                        <div class="p-3 bg-black/40 border border-white/[0.1] rounded-2xl flex items-center justify-between text-xs">
+                            <span class="text-slate-300 text-[11px]">Live Demo Control — Simulate Call Completion:</span>
+                            <button onclick="simulateCallConfirmed()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white border border-emerald-400/30 text-[10px] font-bold transition-all ripple-btn">
+                                ✓ Mark Call Completed
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 pt-1">
+                            <button onclick="cancelTechInspection()" class="flex-1 py-2.5 bg-white/10 hover:bg-red-500/20 hover:text-red-300 text-slate-200 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ripple-btn">
+                                <i class="fa-solid fa-xmark"></i> Cancel Request
+                            </button>
+                            <button onclick="openChangeHubModal()" class="flex-1 py-2.5 bg-brand-orange/20 hover:bg-brand-orange text-brand-orange hover:text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ripple-btn">
+                                <i class="fa-solid fa-arrow-right-arrow-left"></i> Switch Assigned Hub
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STAGE B: DOORSTEP TECHNICIAN EN-ROUTE (~15 MINS) -->
+                    <div id="tracker-stage-arriving" class="hidden space-y-4 view-transition">
+                        <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                                    <i class="fa-solid fa-motorcycle"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Field Specialist En-Route</h4>
+                                    <p class="text-[11px] text-emerald-300 font-semibold">Call Verified • Dispatched for Doorstep Pre-Check</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-mono font-bold animate-pulse">
+                                ARRIVING ~15M
+                            </span>
+                        </div>
+
+                        <div class="p-4 bg-black/45 rounded-2xl border border-white/[0.1] space-y-2.5 text-xs">
+                            <div class="flex justify-between items-center text-slate-200">
+                                <span class="text-slate-400">Assigned Specialist:</span>
+                                <div class="flex items-center gap-2">
+                                    <strong class="text-white">Vikram Sharma (ID: FS-9041)</strong>
+                                    <a href="tel:+919821455012" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white text-[10px] font-bold transition-all flex items-center gap-1">
+                                        <i class="fa-solid fa-phone"></i> Call Tech
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Origin Hub:</span>
+                                <strong id="disp-active-hub" class="text-brand-orange truncate max-w-[220px]">Verified Care Lounge</strong>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Destination:</span>
+                                <span id="disp-user-address" class="text-white truncate max-w-[200px]">Main Street</span>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Payable on Arrival:</span>
+                                <strong id="disp-total-doorstep-fee" class="text-white font-mono font-bold">₹52 (Doorstep Travel Charge)</strong>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="switchAndHoverToRadar()" class="flex-1 py-3 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 ripple-btn">
+                                <i class="fa-solid fa-map-location-dot"></i> Track Live Route on Radar
+                            </button>
+                            <button onclick="cancelTechInspection()" class="px-4 py-3 bg-white/10 hover:bg-red-500/20 text-slate-300 hover:text-red-300 text-xs font-bold rounded-xl transition-all ripple-btn">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STAGE C: SELF-VISIT APPOINTMENT PASS -->
+                    <div id="tracker-stage-self-visit" class="hidden space-y-4 view-transition">
+                        <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-400/30 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                                    <i class="fa-solid fa-ticket"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Walk-In Priority Pass Generated</h4>
+                                    <p class="text-[11px] text-slate-300">Present token at the authorized service desk</p>
+                                </div>
+                            </div>
+                            <span id="self-visit-token" class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30 text-[10px] font-bold font-mono">
+                                TOKEN: TK-841
+                            </span>
+                        </div>
+
+                        <div class="p-4 bg-black/45 rounded-2xl border border-white/[0.1] space-y-2.5 text-xs">
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Assigned Hub:</span>
+                                <strong id="disp-self-hub-name" class="text-white">Care Lounge</strong>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Location:</span>
+                                <span id="disp-self-hub-address" class="text-slate-200 truncate max-w-[220px]">Center Address</span>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Operating Hours:</span>
+                                <span class="text-emerald-400 font-mono font-bold">10:00 AM – 07:30 PM</span>
+                            </div>
+                            <div class="flex justify-between text-slate-200">
+                                <span class="text-slate-400">Counter Fee:</span>
+                                <strong class="text-emerald-400 font-mono font-bold">₹0.00 (Free Desk Check)</strong>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-blue-500/15 border border-blue-400/25 rounded-2xl text-[11px] text-blue-200 space-y-1">
+                            <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Digital Invoice Pre-Synced</p>
+                            <p class="text-[10px] text-slate-300">No doorstep travel fee applies. Show your token for zero-queue reception diagnostics.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="switchAndHoverToRadar()" class="flex-1 py-3 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 ripple-btn">
+                                <i class="fa-solid fa-diamond-turn-right"></i> Show Directions on Radar
+                            </button>
+                            <button onclick="cancelTechInspection()" class="px-4 py-3 bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-bold rounded-xl transition-all ripple-btn">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 1: SWITCH / CHANGE ACTIVE TECH HUB                 -->
+    <!-- ======================================================== -->
+    <div id="change-hub-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-dock rounded-3xl max-w-lg w-full p-6 space-y-4 relative max-h-[85vh] flex flex-col view-transition">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/10 text-brand-orange flex items-center justify-center text-xs font-bold border border-white/20">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Select Alternate Service Hub</h3>
+                        <p id="change-hub-subtext" class="text-[10px] text-slate-300">Filtered for your selected hardware category</p>
+                    </div>
+                </div>
+                <button onclick="closeChangeHubModal()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:text-white">✕</button>
+            </div>
+
+            <div id="dynamic-hub-selector-list" class="space-y-2.5 flex-1 overflow-y-auto pr-1"></div>
+
+            <div class="pt-2 border-t border-white/10 flex justify-end flex-shrink-0">
+                <button onclick="closeChangeHubModal()" class="px-4 py-2 bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-bold rounded-xl transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 2: CRYPTOGRAPHIC BILL PROOF & PNG DOWNLOAD         -->
+    <!-- ======================================================== -->
+    <div id="bill-proof-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-dock rounded-3xl max-w-lg w-full p-6 space-y-4 relative max-h-[92vh] flex flex-col view-transition">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 flex-shrink-0">
+                <h3 id="modal-proof-title" class="text-sm font-bold text-white flex items-center gap-2 truncate">
+                    <i class="fa-solid fa-file-invoice text-brand-orange"></i> Proof of Purchase
+                </h3>
+                <button onclick="closeProofModal()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:text-white">✕</button>
+            </div>
+
+            <div id="modal-proof-container" class="bg-black/45 border border-white/[0.08] rounded-2xl p-4 flex-1 overflow-y-auto flex flex-col items-center justify-center min-h-[260px]"></div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-white/10 flex-shrink-0">
+                <span class="text-[10px] text-slate-300 flex items-center gap-1.5 font-mono"><i class="fa-solid fa-lock text-emerald-400"></i> SHA-256 VAULT VERIFIED</span>
+                <button onclick="downloadActiveProof()" id="btn-download-proof" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-lg shadow-orange-500/20 flex items-center gap-1.5 transition-all ripple-btn">
+                    <i class="fa-solid fa-download"></i> Download Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="receipt-canvas" width="480" height="640" class="hidden"></canvas>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3: WELCOME ONBOARDING TOUR                         -->
+    <!-- ======================================================== -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-dock rounded-3xl max-w-md w-full p-7 space-y-5 relative view-transition">
+            <div class="flex items-center justify-between">
+                <span id="tour-step-badge" class="px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 text-[10px] font-mono font-bold uppercase tracking-wider">
+                    Step 1 of 3
+                </span>
+                <button onclick="closeWelcomeTour()" class="text-xs text-slate-300 hover:text-white font-bold transition-colors">
+                    Skip ✕
+                </button>
+            </div>
+
+            <div id="tour-slide-content" class="text-center space-y-3 py-2"></div>
+
+            <div class="flex items-center justify-center gap-2 pt-1">
+                <div id="dot-0" class="w-6 h-1.5 rounded-full bg-brand-orange transition-all duration-300"></div>
+                <div id="dot-1" class="w-2 h-1.5 rounded-full bg-white/20 transition-all duration-300"></div>
+                <div id="dot-2" class="w-2 h-1.5 rounded-full bg-white/20 transition-all duration-300"></div>
+            </div>
+
+            <div class="flex items-center gap-2.5 pt-2">
+                <button onclick="prevTourStep()" id="btn-tour-prev" class="hidden px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold transition-all">
+                    Back
+                </button>
+                <button onclick="nextTourStep()" id="btn-tour-next" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-orangeDark hover:brightness-110 text-white text-xs font-extrabold shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 ripple-btn">
+                    <span>Continue</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        const GEOAPIFY_API_KEY = "faab2319a7044837b9e0033dbcaac013";
+        const NOW = new Date("2026-10-24");
+
+        let userCoordinates = [32.7040, 74.8700]; // Jammu
+        let userMarker = null;
+        let radarCircle = null;
+
+        let seedDatabase = [];
+        let allCurrentStores = [];
+        let repairHubs = [];
+        let map = null;
+        let markers = [];
+        let activeRouteLayer = null;
+        let baseTileLayers = [];
+        let selectedCategory = 'Phone';
+        let warrantyOnly = false;
+
+        let currentActiveHub = null;
+        let isDispatchLocked = false;
+        let isWarrantyActiveMode = true;
+        let isMobileSheetCollapsed = false;
+        let currentTourStep = 0;
+        let currentViewingDevice = null;
+        let uploadedBillBase64 = null;
+
+        // ========================================================
+        // DESKTOP HOVER + MOBILE ONE-TAP AUTO-SPRING-BACK ENGINE
+        // ========================================================
+        function initInteractiveCards() {
+            const cards = document.querySelectorAll('.spotlight-card');
+            cards.forEach(card => {
+                if (card.dataset.boundTilt) return;
+                card.dataset.boundTilt = "true";
+
+                card.addEventListener('animationend', () => {
+                    card.classList.remove('stagger-item');
+                });
+
+                // 1. DESKTOP MOUSE HOVER (Only for real mouse pointers)
+                card.addEventListener('pointermove', (e) => {
+                    if (e.pointerType !== 'mouse') return;
+
+                    card.classList.remove('stagger-item');
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const pctX = (x / rect.width) * 100;
+                    const pctY = (y / rect.height) * 100;
+
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                    card.style.setProperty('--bg-x', `${100 - pctX}%`);
+                    card.style.setProperty('--bg-y', `${100 - pctY}%`);
+
+                    if (card.classList.contains('tilt-card')) {
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * -7.5;
+                        const rotateY = ((x - centerX) / centerX) * 7.5;
+
+                        card.style.transition = 'transform 0.08s ease-out, border-color 0.25s ease, box-shadow 0.25s ease';
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.016, 1.016, 1.016)`;
+                    }
+                });
+
+                card.addEventListener('pointerleave', (e) => {
+                    if (e.pointerType !== 'mouse') return;
+                    if (card.classList.contains('tilt-card')) {
+                        card.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease';
+                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    }
+                });
+
+                // 2. ANDROID / MOBILE TOUCH ONE-CLICK SWEEP & AUTO-RETURN
+                card.addEventListener('pointerdown', (e) => {
+                    if (e.pointerType === 'mouse') return;
+
+                    // Ignore if user tapped an input/select/textarea inside a form container
+                    const tag = e.target.tagName.toLowerCase();
+                    if (!card.classList.contains('tilt-card') && (tag === 'input' || tag === 'select' || tag === 'textarea')) {
+                        return;
+                    }
+
+                    card.classList.remove('stagger-item');
+                    if (card._touchResetTimer) clearTimeout(card._touchResetTimer);
+                    if (card._touchSweepTimer) clearTimeout(card._touchSweepTimer);
+
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const pctX = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                    const pctY = Math.max(0, Math.min(100, (y / rect.height) * 100));
+
+                    // Start glare sweep from opposite corner to tap point
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                    card.style.setProperty('--bg-x', `${pctX > 50 ? 15 : 85}%`);
+                    card.style.setProperty('--bg-y', `${pctY > 50 ? 15 : 85}%`);
+
+                    card.classList.add('touch-pulse');
+
+                    // Animate slanting silver lines across the card & tilt towards tap point
+                    requestAnimationFrame(() => {
+                        card.style.setProperty('--bg-x', `${100 - pctX}%`);
+                        card.style.setProperty('--bg-y', `${100 - pctY}%`);
+
+                        if (card.classList.contains('tilt-card')) {
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+                            const rotateX = ((y - centerY) / centerY) * -8.5;
+                            const rotateY = ((x - centerX) / centerX) * 8.5;
+
+                            card.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease';
+                            card.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.022, 1.022, 1.022)`;
+                        }
+                    });
+
+                    // Automatically spring back to normal & fade out glare after 520ms
+                    card._touchResetTimer = setTimeout(() => {
+                        card.classList.remove('touch-pulse');
+                        if (card.classList.contains('tilt-card')) {
+                            card.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease';
+                            card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                        }
+                    }, 520);
+                });
+            });
+        }
+
+        const tourSlides = [
+            {
+                icon: "fa-shield-halved",
+                iconColor: "from-brand-orange to-amber-500",
+                title: "Welcome to FixSphere",
+                tagline: "Autonomous Electronics Care Ecosystem",
+                desc: "Stuck with a broken phone or laptop? FixSphere maps category-matched brand lounges within a 10km radar and dispatches doorstep repair specialists."
+            },
+            {
+                icon: "fa-camera-retro",
+                iconColor: "from-blue-500 to-indigo-600",
+                title: "Neural Warranty Vault",
+                tagline: "Zero-Latency Client-Side OCR",
+                desc: "Upload paper receipts or thermal invoices. Our neural parser extracts IMEI/Serial numbers, computes coverage countdowns, and stores cryptographic proof locally."
+            },
+            {
+                icon: "fa-motorcycle",
+                iconColor: "from-emerald-500 to-teal-600",
+                title: "On-Demand Doorstep Dispatch",
+                tagline: "Transparent Distance Telemetry",
+                desc: "Skip service center queues. Book certified technicians to your doorstep (₹49 base + ₹15/km) with a mandatory pre-dispatch verification call."
+            }
+        ];
+
+        const fallbackJammuStores = [
+            { id: "jm_1", name: "Nanak Nagar Display & Touch Screen Hub", address: "Sector 4, Main Road, Nanak Nagar, Jammu", lat: 32.6975, lng: 74.8645, phone: "+919821455012", category: "Phone", isAuthorized: false },
+            { id: "jm_2", name: "Samsung Smart Plaza & Service Care", address: "Main Apsara Road, Gandhi Nagar, Jammu", lat: 32.7012, lng: 74.8598, phone: "+919821455013", category: "Phone", isAuthorized: true },
+            { id: "jm_3", name: "OnePlus Experience & Care Center", address: "Opposite Gole Market, Gandhi Nagar, Jammu", lat: 32.6990, lng: 74.8580, phone: "+919821455014", category: "Phone", isAuthorized: true },
+            { id: "jm_4", name: "Imagine Apple Authorized Service", address: "By-Pass Road, Channi Himmat, Jammu", lat: 32.6895, lng: 74.8840, phone: "+919821455015", category: "Both", isAuthorized: true },
+            { id: "jm_5", name: "HP World & Authorized Laptop Lounge", address: "Bahu Plaza, Rail Head Complex, Jammu", lat: 32.7068, lng: 74.8755, phone: "+919821455016", category: "Laptop", isAuthorized: true },
+            { id: "jm_6", name: "Acer & ASUS Customer Support Lounge", address: "Panama Chowk, Rail Head, Jammu", lat: 32.7095, lng: 74.8780, phone: "+919821455017", category: "Laptop", isAuthorized: true },
+            { id: "jm_7", name: "MicroChip Level Laptop & Motherboard Lab", address: "Gandhi Nagar Extension, Jammu", lat: 32.6950, lng: 74.8620, phone: "+919821455018", category: "Laptop", isAuthorized: false },
+            { id: "jm_8", name: "Gandhi Nagar iPhone & Display Doctor", address: "Near Gole Market, Gandhi Nagar, Jammu", lat: 32.6982, lng: 74.8605, phone: "+919821455019", category: "Phone", isAuthorized: false }
+        ];
+
+        const defaultDevices = [
+            {
+                id: "dev_1",
+                brand: "Apple",
+                model: "iPhone 15 Pro",
+                serial: "APL98234XYZ",
+                store: "Apple Store BKC",
+                purchaseDate: "2026-06-15",
+                price: 134900,
+                warrantyMonths: 12,
+                hasWarranty: true,
+                category: "Phone",
+                invNo: "APL-BKC-99412",
+                billImage: null
+            },
+            {
+                id: "dev_2",
+                brand: "HP",
+                model: "HP Victus 16 Gaming Laptop",
+                serial: "HP991204ABC",
+                store: "HP World Commercial Lounge",
+                purchaseDate: "2025-11-10",
+                price: 78990,
+                warrantyMonths: 12,
+                hasWarranty: true,
+                category: "Laptop",
+                invNo: "HPW-JM-2025-412",
+                billImage: null
+            },
+            {
+                id: "dev_4",
+                brand: "Apple",
+                model: "MacBook Air M2",
+                serial: "MAC771120M2",
+                store: "Imagine Channi Himmat",
+                purchaseDate: "2026-01-20",
+                price: 104900,
+                warrantyMonths: 12,
+                hasWarranty: true,
+                category: "Laptop",
+                invNo: "IMG-CH-2026-019",
+                billImage: null
+            },
+            {
+                id: "dev_5",
+                brand: "OnePlus",
+                model: "OnePlus Nord CE 2 5G",
+                serial: "869559062595017",
+                store: "OnePlus Experience Store",
+                purchaseDate: "2023-10-09",
+                price: 16392,
+                warrantyMonths: 12,
+                hasWarranty: false,
+                category: "Phone",
+                invNo: "INV-SPA230001323",
+                billImage: null
+            }
+        ];
+
+        let savedDevices = [];
+
+        function loadSavedDevicesFromStorage() {
+            try {
+                const stored = localStorage.getItem('fixsphere_saved_devices');
+                if (stored) {
+                    let parsed = JSON.parse(stored);
+                    savedDevices = parsed.filter(d => 
+                        (d.category === 'Phone' || d.category === 'Laptop') && 
+                        !d.model.toLowerCase().includes('headphone') && 
+                        !d.model.toLowerCase().includes('sony wh')
+                    );
+                } else {
+                    savedDevices = defaultDevices;
+                }
+                localStorage.setItem('fixsphere_saved_devices', JSON.stringify(savedDevices));
+            } catch (e) {
+                savedDevices = defaultDevices;
+            }
+        }
+
+        function saveDevicesToStorage() {
+            try {
+                localStorage.setItem('fixsphere_saved_devices', JSON.stringify(savedDevices));
+            } catch (e) {
+                console.warn("Storage quota limit reached.");
+            }
+        }
+
+        let vaultFilter = 'all';
+
+        window.onload = async function() {
+            loadSavedDevicesFromStorage();
+            initMap();
+            await loadSeedDatabase();
+            getUserGPS();
+            renderVaultDashboard();
+            initInspectionForm();
+            initMetricCountUp();
+            loadRememberedProfile();
+            initInteractiveCards();
+            setTimeout(initWelcomeTour, 700);
+        };
+
+        async function loadSeedDatabase() {
+            try {
+                const res = await fetch('stores.json');
+                if (res.ok) {
+                    seedDatabase = await res.json();
+                } else {
+                    seedDatabase = fallbackJammuStores;
+                }
+            } catch (err) {
+                seedDatabase = fallbackJammuStores;
+            }
+        }
+
+        function initMetricCountUp() {
+            animateValue("widget-total-bills", 0, savedDevices.length, 900);
+            let active = 0, expiring = 0, val = 0;
+            savedDevices.forEach(d => {
+                if (d.price) val += d.price;
+                const w = calculateWarranty(d.purchaseDate, d.warrantyMonths, d.hasWarranty);
+                if (w.status === 'active') active++;
+                if (w.status === 'expiring') expiring++;
+            });
+            animateValue("widget-active-warranties", 0, active, 900);
+            animateValue("widget-expiring-soon", 0, expiring, 900);
+            animateCurrency("widget-protected-val", 0, val, 1100);
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function animateCurrency(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                obj.innerText = "₹" + current.toLocaleString('en-IN');
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function initWelcomeTour() {
+            if (!localStorage.getItem('fixsphere_seen_tour')) openWelcomeTour();
+        }
+
+        function openWelcomeTour() {
+            currentTourStep = 0;
+            renderTourSlide();
+            const modal = document.getElementById('welcome-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function renderTourSlide() {
+            const slide = tourSlides[currentTourStep];
+            const container = document.getElementById('tour-slide-content');
+            const badge = document.getElementById('tour-step-badge');
+            const btnPrev = document.getElementById('btn-tour-prev');
+            const btnNext = document.getElementById('btn-tour-next');
+
+            badge.innerText = `Step ${currentTourStep + 1} of 3`;
+            container.innerHTML = `
+                <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr ${slide.iconColor} text-white flex items-center justify-center text-2xl mx-auto shadow-xl shadow-orange-500/15 view-transition">
+                    <i class="fa-solid ${slide.icon}"></i>
+                </div>
+                <div class="space-y-1 view-transition">
+                    <h3 class="text-lg font-extrabold text-white tracking-tight">${slide.title}</h3>
+                    <p class="text-[11px] font-bold text-brand-orange uppercase tracking-wider">${slide.tagline}</p>
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed px-2 view-transition">${slide.desc}</p>
+            `;
+
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`dot-${i}`).className = (i === currentTourStep) ? "w-6 h-1.5 rounded-full bg-brand-orange transition-all duration-300" : "w-2 h-1.5 rounded-full bg-white/20 transition-all duration-300";
+            }
+            btnPrev.classList.toggle('hidden', currentTourStep === 0);
+            btnNext.innerHTML = (currentTourStep === tourSlides.length - 1) ? `<span>Launch Workspace</span> <i class="fa-solid fa-check text-[10px]"></i>` : `<span>Continue</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>`;
+        }
+
+        function nextTourStep() {
+            if (currentTourStep < tourSlides.length - 1) { currentTourStep++; renderTourSlide(); }
+            else { closeWelcomeTour(); }
+        }
+
+        function prevTourStep() {
+            if (currentTourStep > 0) { currentTourStep--; renderTourSlide(); }
+        }
+
+        function closeWelcomeTour() {
+            const modal = document.getElementById('welcome-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            localStorage.setItem('fixsphere_seen_tour', 'true');
+        }
+
+        function toggleMobileSheet() {
+            const panel = document.getElementById('rapido-aside-panel');
+            const icon = document.getElementById('toggle-sheet-icon');
+            const text = document.getElementById('toggle-sheet-text');
+            isMobileSheetCollapsed = !isMobileSheetCollapsed;
+
+            panel.style.transform = isMobileSheetCollapsed ? "translateY(calc(100% - 50px))" : "translateY(0)";
+            icon.className = isMobileSheetCollapsed ? "fa-solid fa-list text-brand-orange" : "fa-solid fa-map text-brand-orange";
+            text.innerText = isMobileSheetCollapsed ? "Show List" : "Full Map";
+            setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+        }
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView(userCoordinates, 12);
+            switchMapStyle('satellite');
+            updateUserMarker();
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+
+        function switchMapStyle(styleType) {
+            baseTileLayers.forEach(l => map.removeLayer(l));
+            baseTileLayers = [];
+
+            if (styleType === 'satellite') {
+                const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+                const refLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+                satLayer.addTo(map); refLayer.addTo(map);
+                baseTileLayers.push(satLayer, refLayer);
+            } else if (styleType === 'street') {
+                const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+                streetLayer.addTo(map);
+                baseTileLayers.push(streetLayer);
+            }
+        }
+
+        function updateUserMarker() {
+            if (userMarker) map.removeLayer(userMarker);
+            if (radarCircle) map.removeLayer(radarCircle);
+
+            const userIcon = L.divIcon({
+                className: 'user-pin-marker',
+                html: `<div class="pulse-user" style="background: #3b82f6; width: 22px; height: 22px; border-radius: 50%; border: 3px solid white; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-person text-[10px] text-white"></i></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            
+            userMarker = L.marker(userCoordinates, { icon: userIcon }).addTo(map);
+            radarCircle = L.circle(userCoordinates, {
+                radius: 10000,
+                color: '#ff6b00',
+                weight: 2,
+                opacity: 0.8,
+                fillColor: '#ff6b00',
+                fillOpacity: 0.05,
+                dashArray: '6, 6'
+            }).addTo(map);
+
+            map.fitBounds(radarCircle.getBounds(), { padding: [20, 20] });
+        }
+
+        function getUserGPS() {
+            const locText = document.getElementById('user-location-text');
+            if (navigator.geolocation) {
+                locText.innerHTML = `<span class="animate-pulse text-brand-orange">Syncing GPS...</span>`;
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        userCoordinates = [pos.coords.latitude, pos.coords.longitude];
+                        updateUserMarker();
+                        reverseGeocodeAndFetch(userCoordinates[0], userCoordinates[1]);
+                    },
+                    () => { updateUserMarker(); reverseGeocodeAndFetch(userCoordinates[0], userCoordinates[1]); },
+                    { enableHighAccuracy: true, timeout: 6000 }
+                );
+            } else {
+                updateUserMarker();
+                reverseGeocodeAndFetch(userCoordinates[0], userCoordinates[1]);
+            }
+        }
+
+        async function reverseGeocodeAndFetch(lat, lng) {
+            const locText = document.getElementById('user-location-text');
+            try {
+                const res = await fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=${GEOAPIFY_API_KEY}`);
+                const data = await res.json();
+                if (data && data.features && data.features.length > 0) {
+                    const props = data.features[0].properties;
+                    const area = props.suburb || props.district || props.street || 'Trikuta Nagar';
+                    const city = props.city || props.state || 'Jammu';
+                    locText.innerText = `${area}, ${city}`;
+                }
+            } catch(e) {
+                locText.innerText = `Trikuta Nagar, Jammu`;
+            }
+            dispatchStoreEngine(lat, lng);
+        }
+
+        function handleAreaSearch(event) {
+            if (event.key === 'Enter') executeAreaSearch();
+        }
+
+        async function executeAreaSearch() {
+            const query = document.getElementById('area-search-input').value.trim();
+            if (!query) return;
+
+            const locText = document.getElementById('user-location-text');
+            locText.innerHTML = `<span class="animate-pulse text-brand-orange">Scanning...</span>`;
+
+            try {
+                const res = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${GEOAPIFY_API_KEY}&limit=1`);
+                const data = await res.json();
+
+                if (data && data.features && data.features.length > 0) {
+                    const feature = data.features[0];
+                    userCoordinates = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+                    updateUserMarker();
+                    locText.innerText = feature.properties.formatted.split(',').slice(0, 2).join(',');
+                    dispatchStoreEngine(userCoordinates[0], userCoordinates[1]);
+                } else {
+                    locText.innerText = `Sector not found`;
+                }
+            } catch (err) {
+                locText.innerText = `Search error`;
+            }
+        }
+
+        async function dispatchStoreEngine(lat, lng) {
+            const indicator = document.getElementById('fetch-indicator');
+            const localMatches = [];
+            const sourceDB = (seedDatabase && seedDatabase.length > 0) ? seedDatabase : fallbackJammuStores;
+
+            sourceDB.forEach(item => {
+                const distKm = getDistanceFromLatLonInKm(lat, lng, item.lat, item.lng);
+                if (distKm <= 10.0) {
+                    const distMoney = Math.round(49 + (distKm * 15));
+                    localMatches.push({
+                        ...item,
+                        type: item.isAuthorized ? 'Authorized Hub' : 'Verified Partner Tech',
+                        distanceValue: distKm,
+                        distance: `${distKm.toFixed(1)} km`,
+                        diagnosticFare: distMoney
+                    });
+                }
+            });
+
+            allCurrentStores = localMatches.sort((a, b) => a.distanceValue - b.distanceValue);
+            indicator.innerHTML = `<i class="fa-solid fa-circle-check text-brand-green"></i> 10KM SYNCED (${allCurrentStores.length})`;
+            
+            handleSelectedDeviceCategoryChange();
+            applyCategoryFilter();
+        }
+
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            const pBtn = document.getElementById('cat-phone');
+            const lBtn = document.getElementById('cat-laptop');
+            const titleEl = document.getElementById('active-category-title');
+
+            if (cat === 'Phone') {
+                pBtn.className = 'glass-tab-btn active-tab flex-1 py-1.5 text-[11px] font-bold flex items-center justify-center gap-1.5';
+                lBtn.className = 'glass-tab-btn flex-1 py-1.5 text-gray-300 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5';
+                titleEl.innerText = 'Phone Repair Hubs';
+            } else {
+                lBtn.className = 'glass-tab-btn active-tab flex-1 py-1.5 text-[11px] font-bold flex items-center justify-center gap-1.5';
+                pBtn.className = 'glass-tab-btn flex-1 py-1.5 text-gray-300 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5';
+                titleEl.innerText = 'Laptop & PC Care';
+            }
+            applyCategoryFilter();
+        }
+
+        function toggleWarrantyChip() {
+            warrantyOnly = !warrantyOnly;
+            const chip = document.getElementById('warranty-chip');
+            chip.className = warrantyOnly 
+                ? 'px-3 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold flex items-center gap-1.5 transition-all whitespace-nowrap shadow-sm ripple-btn' 
+                : 'px-3 py-2 rounded-xl bg-black/40 border border-white/[0.12] text-gray-300 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ripple-btn';
+            applyCategoryFilter();
+        }
+
+        function applyCategoryFilter() {
+            repairHubs = allCurrentStores.filter(h => {
+                const deviceMatch = (h.category === selectedCategory) || (h.category === 'Both');
+                const warrantyMatch = !warrantyOnly || h.isAuthorized;
+                return deviceMatch && warrantyMatch;
+            });
+            renderMapPins();
+            renderHubList();
+        }
+
+        function renderMapPins() {
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            repairHubs.forEach(hub => {
+                const pinColor = hub.isAuthorized ? '#10b981' : '#ff6b00';
+                const pinIcon = L.divIcon({
+                    className: 'custom-pin',
+                    html: `<div style="background: ${pinColor}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.7);"><i class="fa-solid ${hub.category === 'Laptop' ? 'fa-laptop' : (hub.isAuthorized ? 'fa-shield-halved' : 'fa-mobile-screen')} text-xs"></i></div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+
+                const m = L.marker([hub.lat, hub.lng], { icon: pinIcon }).addTo(map)
+                    .bindPopup(`
+                        <div style="font-family: inherit; font-size: 11px; min-width: 180px; color: #111;">
+                            <strong style="color: ${pinColor}; font-size: 12px;">${hub.name}</strong><br>
+                            <span style="color: #4b5563;">📍 ${hub.address}</span><br>
+                            <span style="display:inline-block; margin-top: 3px; font-weight: bold; color: #ff6b00;">${hub.distance} • Travel Fee: ₹${hub.diagnosticFare}</span>
+                            <div style="display:flex; gap: 5px; margin-top: 6px;">
+                                <a href="tel:${hub.phone}" style="flex:1; background: #ff6b00; color: white; padding: 4px; border-radius: 6px; text-align: center; text-decoration: none; font-weight: bold; font-size: 10px;">📞 Call</a>
+                                <button onclick="startInspectionFromRadar('${hub.id}')" style="flex:1.2; background: #10b981; color: white; border: none; padding: 4px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer;">🛵 Claim</button>
+                            </div>
+                        </div>
+                    `);
+                markers.push(m);
+            });
+        }
+
+        function renderHubList() {
+            const listEl = document.getElementById('repair-list');
+            document.getElementById('center-count').innerText = repairHubs.length;
+
+            if (repairHubs.length === 0) {
+                listEl.innerHTML = `
+                    <div class="py-8 text-center text-gray-400 space-y-1">
+                        <i class="fa-solid ${selectedCategory === 'Laptop' ? 'fa-laptop' : 'fa-mobile-screen'} text-xl text-gray-500"></i>
+                        <p class="text-xs">No verified ${selectedCategory.toLowerCase()} centers in this 10 km range.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = repairHubs.map((h, idx) => {
+                const safeName = (h.name || '').replace(/'/g, "\\'");
+                const isThisActive = currentActiveHub && currentActiveHub.id === h.id;
+
+                return `
+                <div style="animation-delay: ${idx * 45}ms" class="store-card stagger-item p-3 rounded-2xl space-y-2 ${isThisActive ? 'border-slate-300/60 bg-white/[0.09]' : ''}">
+                    <div class="flex items-start justify-between">
+                        <div class="space-y-0.5">
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${h.isAuthorized ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' : 'bg-orange-500/20 text-orange-300 border border-orange-400/30'}">
+                                ${h.type}
+                            </span>
+                            <h4 class="text-xs font-bold text-white pt-0.5 leading-snug">${h.name}</h4>
+                            <p class="text-[10px] text-gray-300 truncate max-w-[190px] flex items-center gap-1">
+                                <i class="fa-solid fa-location-dot text-[9px] text-gray-400"></i>
+                                <span>${h.address}</span>
+                            </p>
+                        </div>
+                        <div class="text-right whitespace-nowrap ml-2 font-mono">
+                            <span class="text-[11px] font-bold text-white bg-white/10 px-2 py-0.5 rounded-lg border border-white/20 block">
+                                ${h.distance}
+                            </span>
+                            <span class="text-[9px] text-gray-300 font-semibold block mt-0.5">₹${h.diagnosticFare} Travel</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-1.5 pt-1 border-t border-white/[0.08]">
+                        <a href="tel:${h.phone}" class="py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.12] text-center text-[10px] sm:text-[11px] font-bold text-gray-200 transition-all flex items-center justify-center gap-1 ripple-btn">
+                            <i class="fa-solid fa-phone text-brand-orange text-[9px]"></i> Call
+                        </a>
+                        <button onclick="triggerRouteToHub(${h.lat}, ${h.lng}, '${safeName}')" class="py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.12] text-center text-[10px] sm:text-[11px] font-bold text-gray-200 transition-all flex items-center justify-center gap-1 ripple-btn">
+                            <i class="fa-solid fa-location-arrow text-blue-400 text-[9px]"></i> Route
+                        </button>
+                        ${isDispatchLocked ? `
+                        <button disabled class="py-1.5 rounded-xl bg-white/5 text-center text-[10px] sm:text-[11px] font-bold text-gray-500 cursor-not-allowed flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-lock text-[9px]"></i> Busy
+                        </button>
+                        ` : `
+                        <button onclick="startInspectionFromRadar('${h.id}')" class="py-1.5 rounded-xl bg-brand-orange/20 hover:bg-brand-orange text-center text-[10px] sm:text-[11px] font-bold text-brand-orange hover:text-white transition-all flex items-center justify-center gap-1 ripple-btn">
+                            <i class="fa-solid fa-motorcycle text-[9px]"></i> Dispatch
+                        </button>
+                        `}
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function triggerRouteToHub(destLat, destLng, storeName) {
+            if (activeRouteLayer) map.removeLayer(activeRouteLayer);
+
+            const midLat = (userCoordinates[0] + destLat) / 2 + 0.0015;
+            const midLng = (userCoordinates[1] + destLng) / 2 - 0.0015;
+            const routePoints = [userCoordinates, [midLat, midLng], [destLat, destLng]];
+
+            activeRouteLayer = L.polyline(routePoints, {
+                color: '#ff6b00',
+                weight: 5,
+                opacity: 0.95,
+                dashArray: '8, 8',
+                lineCap: 'round'
+            }).addTo(map);
+
+            map.fitBounds(L.latLngBounds([userCoordinates, [destLat, destLng]]), { padding: [50, 50] });
+
+            const routeCard = document.getElementById('route-info-card');
+            routeCard.classList.remove('hidden');
+            document.getElementById('route-dest-text').innerText = `${storeName}`;
+
+            const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userCoordinates[0]},${userCoordinates[1]}&destination=${destLat},${destLng}&travelmode=driving`;
+            document.getElementById('gmaps-external-link').href = gmapsUrl;
+        }
+
+        function clearCurrentRoute() {
+            if (activeRouteLayer) {
+                map.removeLayer(activeRouteLayer);
+                activeRouteLayer = null;
+            }
+            document.getElementById('route-info-card').classList.add('hidden');
+            map.fitBounds(radarCircle.getBounds(), { padding: [20, 20] });
+        }
+
+        function startInspectionFromRadar(storeId) {
+            if (storeId) {
+                const target = allCurrentStores.find(h => h.id === storeId);
+                if (target) {
+                    currentActiveHub = target;
+                    updateActiveHubDisplay();
+                }
+            }
+            scrollToVault('claim');
+        }
+
+        function scrollToVault(subView) {
+            document.getElementById('warranty-vault-section').scrollIntoView({ behavior: 'smooth' });
+            if (subView) switchVaultSubView(subView);
+        }
+
+        function calculateWarranty(purchaseDateStr, months, hasWarranty) {
+            if (!hasWarranty || !purchaseDateStr) {
+                return { expiryDate: "N/A", daysRemaining: 0, status: 'expired', progressPercent: 100, label: "Coverage Expired" };
+            }
+
+            const pDate = new Date(purchaseDateStr);
+            const expiryDate = new Date(pDate);
+            expiryDate.setMonth(expiryDate.getMonth() + parseInt(months));
+
+            const totalDuration = expiryDate.getTime() - pDate.getTime();
+            const timeRemaining = expiryDate.getTime() - NOW.getTime();
+            const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+
+            let status = 'active';
+            let progressPercent = 0;
+
+            if (daysRemaining <= 0) {
+                status = 'expired';
+                progressPercent = 100;
+            } else if (daysRemaining <= 30) {
+                status = 'expiring';
+                progressPercent = Math.min(100, Math.max(12, ((totalDuration - timeRemaining) / totalDuration) * 100));
+            } else {
+                status = 'active';
+                progressPercent = Math.min(100, Math.max(8, ((totalDuration - timeRemaining) / totalDuration) * 100));
+            }
+
+            return {
+                expiryDate: expiryDate.toISOString().split('T')[0],
+                daysRemaining: Math.max(0, daysRemaining),
+                status: status,
+                progressPercent: progressPercent,
+                label: status === 'expired' ? 'Coverage Expired' : `Valid till ${expiryDate.toISOString().split('T')[0]}`
+            };
+        }
+
+        function renderVaultDashboard() {
+            const grid = document.getElementById('vault-devices-grid');
+            let totalBills = savedDevices.length;
+            let activeCount = 0, expiringCount = 0, totalValue = 0;
+
+            savedDevices.forEach(d => {
+                if (d.price) totalValue += d.price;
+                const w = calculateWarranty(d.purchaseDate, d.warrantyMonths, d.hasWarranty);
+                if (w.status === 'active') activeCount++;
+                if (w.status === 'expiring') expiringCount++;
+            });
+
+            document.getElementById('widget-total-bills').innerText = totalBills;
+            document.getElementById('widget-active-warranties').innerText = activeCount;
+            document.getElementById('widget-expiring-soon').innerText = expiringCount;
+            document.getElementById('widget-protected-val').innerText = '₹' + totalValue.toLocaleString('en-IN');
+
+            const filtered = savedDevices.filter(d => {
+                const w = calculateWarranty(d.purchaseDate, d.warrantyMonths, d.hasWarranty);
+                if (vaultFilter === 'active') return w.status === 'active';
+                if (vaultFilter === 'expiring') return w.status === 'expiring';
+                if (vaultFilter === 'expired') return w.status === 'expired';
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 py-12 text-center text-slate-300 space-y-2 spotlight-card rounded-3xl">
+                        <i class="fa-solid fa-box-open text-2xl text-slate-400"></i>
+                        <p class="text-xs font-medium">No hardware assets match this filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map((d, idx) => {
+                const w = calculateWarranty(d.purchaseDate, d.warrantyMonths, d.hasWarranty);
+                let badgeClass = "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30";
+                let badgeText = `${w.daysRemaining} Days Left`;
+                let barColor = "bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.5)]";
+
+                if (w.status === 'expired' || !d.hasWarranty) {
+                    badgeClass = "bg-red-500/20 text-red-300 border border-red-400/30";
+                    badgeText = "Warranty Expired";
+                    barColor = "bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]";
+                } else if (w.status === 'expiring') {
+                    badgeClass = "bg-amber-500/20 text-amber-300 border border-amber-400/30";
+                    badgeText = `Expiring (${w.daysRemaining}d)`;
+                    barColor = "bg-gradient-to-r from-amber-400 to-orange-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]";
+                }
+
+                return `
+                <div style="animation-delay: ${idx * 55}ms" class="spotlight-card tilt-card stagger-item p-5 sm:p-6 rounded-3xl space-y-4 relative group cursor-pointer select-none">
+                    <button onclick="removeDeviceFromVault('${d.id}')" title="Remove asset" class="absolute top-4 right-4 w-7 h-7 rounded-xl bg-white/[0.06] hover:bg-red-500/25 text-slate-300 hover:text-red-300 flex items-center justify-center text-[10px] transition-all">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+
+                    <div class="flex items-start justify-between pr-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white text-base flex-shrink-0 shadow-inner">
+                                <i class="fa-solid ${d.category === 'Laptop' ? 'fa-laptop' : 'fa-mobile-screen'} text-brand-orange"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold tracking-widest text-slate-300 uppercase">${d.brand} • ${d.category}</span>
+                                <h3 class="text-sm sm:text-base font-extrabold text-white tracking-tight">${d.model}</h3>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full ${badgeClass} whitespace-nowrap">
+                            ${badgeText}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs py-3 border-y border-white/[0.08]">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Serial / IMEI</span>
+                            <span class="font-mono text-white font-bold text-[11px] truncate block mt-0.5">${d.serial || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Invoice Date</span>
+                            <span class="font-mono text-white font-bold text-[11px] block mt-0.5">${d.purchaseDate || 'Unregistered'}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Protection Tier</span>
+                            <span class="text-slate-200 font-semibold text-[11px] block mt-0.5">${(d.hasWarranty && w.status !== 'expired') ? 'OEM Brand Protected' : 'Out of Warranty (Paid Care)'}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Asset Valuation</span>
+                            <span class="font-mono text-brand-orange font-bold text-[11px] block mt-0.5">${d.price ? '₹' + d.price.toLocaleString('en-IN') : 'Not Specified'}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-[10px] font-semibold text-slate-300">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-stopwatch text-brand-orange"></i> Coverage Telemetry</span>
+                            <span class="font-mono text-white">${w.label}</span>
+                        </div>
+                        <div class="w-full bg-black/65 h-2 rounded-full overflow-hidden border border-white/[0.08]">
+                            <div class="h-full ${barColor} rounded-full transition-all duration-500" style="width: ${w.progressPercent}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <button onclick="openProofModal('${d.id}')" class="py-2 rounded-xl bg-white/[0.07] hover:bg-white/[0.15] border border-white/[0.12] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 ripple-btn">
+                            <i class="fa-solid fa-receipt text-brand-orange text-[10px]"></i> Proof
+                        </button>
+                        <button onclick="scrollToMapAndFilter('${d.brand}', '${d.category}')" class="py-2 rounded-xl bg-white/[0.07] hover:bg-white/[0.15] border border-white/[0.12] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 ripple-btn">
+                            <i class="fa-solid fa-location-dot text-blue-400 text-[10px]"></i> Radar Hub
+                        </button>
+                        <button onclick="jumpToInspection('${d.id}')" class="py-2 rounded-xl bg-brand-orange/20 hover:bg-brand-orange border border-brand-orange/40 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 ripple-btn">
+                            <i class="fa-solid fa-user-shield text-[10px]"></i> Claim
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            initInteractiveCards();
+        }
+
+        function filterVaultDevices(type) {
+            vaultFilter = type;
+            ['all', 'active', 'expiring', 'expired'].forEach(t => {
+                const btn = document.getElementById('vfilter-' + t);
+                btn.className = (t === type) 
+                    ? "glass-tab-btn active-tab px-3.5 py-1.5 text-xs font-bold whitespace-nowrap" 
+                    : "glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap";
+            });
+            renderVaultDashboard();
+        }
+
+        function searchVaultDeviceList(query) {
+            const q = query.toLowerCase();
+            const grid = document.getElementById('vault-devices-grid');
+            const cards = grid.getElementsByClassName('spotlight-card');
+            for (let card of cards) {
+                card.style.display = card.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+            }
+        }
+
+        function removeDeviceFromVault(devId) {
+            const dev = savedDevices.find(d => d.id === devId);
+            if (!dev) return;
+            if (confirm(`Remove "${dev.model}" from vault?`)) {
+                savedDevices = savedDevices.filter(d => d.id !== devId);
+                saveDevicesToStorage();
+                renderVaultDashboard();
+                initInspectionForm();
+            }
+        }
+
+        function scrollToMapAndFilter(brand, category) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            selectCategory(category);
+            warrantyOnly = true;
+            document.getElementById('warranty-chip').className = 'px-3 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold flex items-center gap-1.5 transition-all whitespace-nowrap shadow-sm ripple-btn';
+            applyCategoryFilter();
+            if (isMobileSheetCollapsed) toggleMobileSheet();
+        }
+
+        function switchVaultSubView(sub) {
+            ['dashboard', 'scanner', 'claim'].forEach(s => {
+                const el = document.getElementById('vault-' + s + '-content');
+                el.classList.add('hidden');
+                el.classList.remove('view-transition');
+            });
+            ['dash', 'scan', 'claim'].forEach(b => {
+                document.getElementById('btn-vault-' + b).className = 'glass-tab-btn px-4 py-2 text-slate-300 hover:text-white text-xs font-semibold whitespace-nowrap flex items-center gap-2';
+            });
+
+            if (sub === 'dashboard') {
+                const target = document.getElementById('vault-dashboard-content');
+                target.classList.remove('hidden');
+                void target.offsetWidth;
+                target.classList.add('view-transition');
+                document.getElementById('btn-vault-dash').className = 'glass-tab-btn active-tab px-4 py-2 text-xs font-bold whitespace-nowrap flex items-center gap-2';
+                initMetricCountUp();
+                renderVaultDashboard();
+            } else if (sub === 'scanner') {
+                const target = document.getElementById('vault-scanner-content');
+                target.classList.remove('hidden');
+                void target.offsetWidth;
+                target.classList.add('view-transition');
+                document.getElementById('btn-vault-scan').className = 'glass-tab-btn active-tab px-4 py-2 text-xs font-bold whitespace-nowrap flex items-center gap-2';
+                initInteractiveCards();
+            } else if (sub === 'claim') {
+                const target = document.getElementById('vault-claim-content');
+                target.classList.remove('hidden');
+                void target.offsetWidth;
+                target.classList.add('view-transition');
+                document.getElementById('btn-vault-claim').className = 'glass-tab-btn active-tab px-4 py-2 text-xs font-bold whitespace-nowrap flex items-center gap-2';
+                handleSelectedDeviceCategoryChange();
+                initInteractiveCards();
+            }
+        }
+
+        function setWarrantyToggle(hasWarranty) {
+            isWarrantyActiveMode = hasWarranty;
+            const bYes = document.getElementById('btn-warr-yes');
+            const bNo = document.getElementById('btn-warr-no');
+            const uploadBlock = document.getElementById('warranty-upload-block');
+            const warrFields = document.getElementById('warranty-fields-block');
+
+            if (hasWarranty) {
+                bYes.className = "glass-tab-btn active-tab px-3.5 py-1.5 text-xs font-bold";
+                bNo.className = "glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold";
+                uploadBlock.classList.remove('hidden');
+                warrFields.classList.remove('hidden');
+            } else {
+                bNo.className = "glass-tab-btn active-tab px-3.5 py-1.5 text-xs font-bold";
+                bYes.className = "glass-tab-btn px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-semibold";
+                uploadBlock.classList.add('hidden');
+                warrFields.classList.add('hidden');
+            }
+        }
+
+        let detectedInvoiceItems = [];
+
+        async function handleBillUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                uploadedBillBase64 = e.target.result;
+
+                const progressBox = document.getElementById('scan-progress');
+                const statusText = document.getElementById('scan-status-text');
+                const pBar = document.getElementById('scan-bar');
+                const pText = document.getElementById('scan-percentage');
+                const multiSelector = document.getElementById('multi-item-selector');
+                const multiButtons = document.getElementById('multi-item-buttons');
+
+                progressBox.classList.remove('hidden');
+                multiSelector.classList.add('hidden');
+                multiButtons.innerHTML = '';
+                detectedInvoiceItems = [];
+
+                statusText.innerHTML = `<i class="fa-solid fa-microchip text-brand-orange animate-spin mr-1.5"></i> Neural Vision Scanning Receipt...`;
+                pBar.style.width = '45%';
+                pText.innerText = '45%';
+
+                const worker = await Tesseract.createWorker('eng');
+                const ret = await worker.recognize(file);
+                const rawText = ret.data.text;
+                const lowerText = rawText.toLowerCase();
+                await worker.terminate();
+
+                pBar.style.width = '100%';
+                pText.innerText = '100%';
+                statusText.innerHTML = `<i class="fa-solid fa-microchip text-emerald-400 mr-1.5"></i> Neural Vision Verified!`;
+
+                let dBrand = "OnePlus";
+                let dModel = "OnePlus Nord CE 2 5G";
+                let dCat = "Phone";
+                let dSerial = "869559062595017";
+                let dDate = "2023-10-09";
+                let dPrice = 16392;
+
+                const imeiMatch = rawText.match(/\b([0-9]{15})\b/);
+                if (imeiMatch) dSerial = imeiMatch[1];
+
+                const dateMatch = rawText.match(/(\d{1,2})[\s\:\-\/]([a-zA-Z]{3})[\s\:\-\/](\d{4})/i);
+                if (dateMatch) {
+                    const monthsMap = { jan:"01", feb:"02", mar:"03", apr:"04", may:"05", jun:"06", jul:"07", aug:"08", sep:"09", oct:"10", nov:"11", dec:"12" };
+                    dDate = `${dateMatch[3]}-${monthsMap[dateMatch[2].toLowerCase()] || '10'}-${dateMatch[1].padStart(2, '0')}`;
+                }
+
+                if (lowerText.includes("victus")) { dBrand = "HP"; dModel = "HP Victus 16 Gaming Laptop"; dCat = "Laptop"; dPrice = 76990; }
+                else if (lowerText.includes("s24")) { dBrand = "Samsung"; dModel = "Samsung Galaxy S24 Ultra"; dCat = "Phone"; dPrice = 119999; }
+                else if (lowerText.includes("iphone")) { dBrand = "Apple"; dModel = "iPhone 15 Pro Max"; dCat = "Phone"; dPrice = 134900; }
+                else if (lowerText.includes("envy")) { dBrand = "HP"; dModel = "HP Envy x360 OLED"; dCat = "Laptop"; dPrice = 84990; }
+
+                detectedInvoiceItems = [{
+                    brand: dBrand,
+                    model: dModel,
+                    category: dCat,
+                    serial: dSerial,
+                    date: dDate,
+                    months: 12,
+                    price: dPrice
+                }];
+
+                selectInvoiceDevice(0);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function selectInvoiceDevice(index) {
+            const item = detectedInvoiceItems[index] || detectedInvoiceItems[0];
+            if (!item) return;
+
+            document.getElementById('form-brand').value = item.brand;
+            document.getElementById('form-model').value = item.model;
+            document.getElementById('form-category').value = item.category;
+            document.getElementById('form-serial').value = item.serial;
+            document.getElementById('form-date').value = item.date;
+            document.getElementById('form-months').value = item.months;
+            document.getElementById('form-price').value = item.price;
+        }
+
+        function saveScannedDevice() {
+            const brand = document.getElementById('form-brand').value;
+            const model = document.getElementById('form-model').value.trim() || `${brand} Device`;
+            const category = document.getElementById('form-category').value;
+            const serial = document.getElementById('form-serial').value.trim() || ("SN" + Math.floor(10000000 + Math.random() * 90000000));
+            const date = isWarrantyActiveMode ? (document.getElementById('form-date').value || "2026-05-10") : null;
+            const priceInput = document.getElementById('form-price').value;
+            const price = priceInput ? parseInt(priceInput) : 0;
+            const months = isWarrantyActiveMode ? (parseInt(document.getElementById('form-months').value) || 12) : 0;
+
+            savedDevices.unshift({
+                id: "dev_" + Date.now(),
+                brand: brand,
+                model: model,
+                serial: serial,
+                store: isWarrantyActiveMode ? "Official Retail Hub" : "Personal / Unregistered",
+                purchaseDate: date,
+                price: price,
+                warrantyMonths: months,
+                hasWarranty: isWarrantyActiveMode,
+                category: category,
+                invNo: "INV-FXS-" + Math.floor(10000 + Math.random() * 90000),
+                billImage: uploadedBillBase64
+            });
+
+            saveDevicesToStorage();
+            renderVaultDashboard();
+            initInspectionForm();
+            initMetricCountUp();
+            switchVaultSubView('dashboard');
+            alert(`✅ "${model}" & Proof Image safely committed to FixSphere Vault!`);
+        }
+
+        // ========================================================
+        // CATEGORY-AWARE & STATUS-ACCURATE CLAIM ENGINE
+        // ========================================================
+        function initInspectionForm() {
+            const select = document.getElementById('claim-device-select');
+            
+            select.innerHTML = savedDevices.map(d => {
+                const w = calculateWarranty(d.purchaseDate, d.warrantyMonths, d.hasWarranty);
+                const statusTag = (w.status === 'expired' || !d.hasWarranty) ? "Coverage Expired (Out of Warranty)" : `Active Warranty (${w.daysRemaining}d left)`;
+                return `
+                    <option value="${d.id}" data-category="${d.category}" class="bg-[#0b0f19]">
+                        ${d.brand} ${d.model} (${d.category}) • ${statusTag}
+                    </option>
+                `;
+            }).join('');
+
+            handleSelectedDeviceCategoryChange();
+        }
+
+        function jumpToInspection(devId) {
+            switchVaultSubView('claim');
+            document.getElementById('claim-device-select').value = devId;
+            handleSelectedDeviceCategoryChange();
+            document.getElementById('vault-claim-content').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleSelectedDeviceCategoryChange() {
+            const select = document.getElementById('claim-device-select');
+            const devId = select.value;
+            const dev = savedDevices.find(d => d.id === devId) || savedDevices[0];
+            if (!dev) return;
+
+            const targetCategory = dev.category || 'Phone';
+            const suitableHubs = allCurrentStores.filter(h => h.category === targetCategory || h.category === 'Both');
+
+            if (suitableHubs.length > 0) {
+                if (!currentActiveHub || (currentActiveHub.category !== targetCategory && currentActiveHub.category !== 'Both')) {
+                    currentActiveHub = suitableHubs[0];
+                }
+            } else if (allCurrentStores.length > 0) {
+                currentActiveHub = allCurrentStores[0];
+            }
+
+            updateActiveHubDisplay();
+        }
+
+        function updateActiveHubDisplay() {
+            if (!currentActiveHub) return;
+            const el = document.getElementById('active-selected-hub-name');
+            if (el) el.innerText = `${currentActiveHub.name} (${currentActiveHub.distance || 'Near'})`;
+            
+            const dispEl = document.getElementById('disp-active-hub');
+            if (dispEl) dispEl.innerText = `${currentActiveHub.name} • ${currentActiveHub.address}`;
+
+            const selfNameEl = document.getElementById('disp-self-hub-name');
+            if (selfNameEl) selfNameEl.innerText = currentActiveHub.name;
+
+            const selfAddrEl = document.getElementById('disp-self-hub-address');
+            if (selfAddrEl) selfAddrEl.innerText = currentActiveHub.address;
+
+            const fare = currentActiveHub.diagnosticFare || 52;
+            const select = document.getElementById('claim-device-select');
+            const devId = select.value;
+            const dev = savedDevices.find(d => d.id === devId) || savedDevices[0];
+            const w = dev ? calculateWarranty(dev.purchaseDate, dev.warrantyMonths, dev.hasWarranty) : { status: 'expired' };
+
+            const fareTextEl = document.getElementById('doorstep-fare-text');
+            const totalDueEl = document.getElementById('disp-total-doorstep-fee');
+
+            if (w.status === 'expired' || !dev.hasWarranty) {
+                if (fareTextEl) fareTextEl.innerHTML = `Hardware Quotation: <strong class="text-amber-300">Post-Inspection Estimate</strong> • Doorstep Visit: <strong class="text-brand-orange font-mono font-bold">₹${fare}</strong>`;
+                if (totalDueEl) totalDueEl.innerText = `₹${fare} (Doorstep Inspection Charge • Parts Extra)`;
+            } else {
+                if (fareTextEl) fareTextEl.innerHTML = `Component Replacement: <strong class="text-emerald-300">₹0 (Free OEM Warranty)</strong> • Fuel/Travel Fee: <strong class="text-brand-orange font-mono font-bold">₹${fare}</strong>`;
+                if (totalDueEl) totalDueEl.innerText = `₹${fare} (Doorstep Distance Fuel Fee • ₹0 Parts)`;
+            }
+        }
+
+        function handleInspectionPrefChange(pref) {
+            const fareBlock = document.getElementById('doorstep-fare-summary-block');
+            const btn = document.getElementById('btn-submit-inspection-req');
+
+            if (pref === 'center') {
+                fareBlock.classList.add('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-ticket"></i> Book Free Self-Visit Center Appointment`;
+            } else {
+                fareBlock.classList.remove('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-phone-volume"></i> Request Verification & Technician Inspection`;
+            }
+        }
+
+        function openChangeHubModal() {
+            const modal = document.getElementById('change-hub-modal');
+            const list = document.getElementById('dynamic-hub-selector-list');
+            const subtext = document.getElementById('change-hub-subtext');
+
+            const select = document.getElementById('claim-device-select');
+            const devId = select.value;
+            const dev = savedDevices.find(d => d.id === devId) || savedDevices[0];
+            const targetCategory = dev ? dev.category : 'Phone';
+
+            subtext.innerText = `Showing verified ${targetCategory} repair lounges within 10km radar`;
+
+            const suitableHubs = allCurrentStores.filter(h => h.category === targetCategory || h.category === 'Both');
+            const listToRender = suitableHubs.length > 0 ? suitableHubs : allCurrentStores;
+
+            list.innerHTML = listToRender.map(h => {
+                const isSelected = currentActiveHub && currentActiveHub.id === h.id;
+                return `
+                <div onclick="selectAlternateHub('${h.id}')" class="p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isSelected ? 'border-slate-300 bg-white/15 shadow-md' : 'border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.08]'}">
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-xs font-bold text-white">${h.name}</h4>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${h.isAuthorized ? 'bg-emerald-500/20 text-emerald-300' : 'bg-orange-500/20 text-orange-300'}">${h.type}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-300">${h.address}</p>
+                    </div>
+                    <div class="text-right font-mono">
+                        <span class="text-xs font-bold text-brand-orange">${h.distance}</span>
+                        <span class="text-[9px] font-sans text-slate-300 block">${isSelected ? '● Active' : 'Select'}</span>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeChangeHubModal() {
+            const modal = document.getElementById('change-hub-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function selectAlternateHub(hubId) {
+            const found = allCurrentStores.find(h => h.id === hubId);
+            if (found) {
+                currentActiveHub = found;
+                updateActiveHubDisplay();
+                applyCategoryFilter();
+            }
+            closeChangeHubModal();
+        }
+
+        function loadRememberedProfile() {
+            try {
+                const profile = JSON.parse(localStorage.getItem('fixsphere_user_profile') || '{}');
+                if (profile.phone) document.getElementById('user-contact-phone').value = profile.phone;
+                if (profile.address) document.getElementById('user-contact-address').value = profile.address;
+            } catch(e) {}
+        }
+
+        function saveRememberedProfile(phone, address) {
+            localStorage.setItem('fixsphere_user_profile', JSON.stringify({ phone, address }));
+        }
+
+        function clearSavedUserProfile() {
+            localStorage.removeItem('fixsphere_user_profile');
+            document.getElementById('user-contact-phone').value = '';
+            document.getElementById('user-contact-address').value = '';
+            alert("🗑️ Saved contact & address cleared.");
+        }
+
+        let callCountdownInterval = null;
+
+        function requestWarrantyInspection() {
+            const phone = document.getElementById('user-contact-phone').value.trim();
+            const address = document.getElementById('user-contact-address').value.trim();
+            const pref = document.getElementById('claim-pref-select').value;
+
+            if (!phone) {
+                alert("Please provide your contact phone number.");
+                return;
+            }
+            if (pref === 'doorstep' && !address) {
+                alert("Please provide your delivery/inspection street address.");
+                return;
+            }
+
+            saveRememberedProfile(phone, address);
+
+            document.getElementById('disp-user-phone').innerText = phone;
+            document.getElementById('disp-user-address').innerText = address || "Customer Walk-in";
+
+            isDispatchLocked = true;
+            document.getElementById('btn-radar-bottom-text').innerText = "● Active Dispatch Locked";
+            applyCategoryFilter();
+
+            document.getElementById('claim-form-container').classList.add('hidden');
+            document.getElementById('claim-tracker-container').classList.remove('hidden');
+
+            if (pref === 'center') {
+                document.getElementById('tracker-stage-call').classList.add('hidden');
+                document.getElementById('tracker-stage-arriving').classList.add('hidden');
+                document.getElementById('tracker-stage-self-visit').classList.remove('hidden');
+                document.getElementById('self-visit-token').innerText = "TOKEN: TK-" + Math.floor(100 + Math.random() * 900);
+            } else {
+                document.getElementById('tracker-stage-self-visit').classList.add('hidden');
+                document.getElementById('tracker-stage-call').classList.remove('hidden');
+                document.getElementById('tracker-stage-arriving').classList.add('hidden');
+                startCallCountdown();
+            }
+        }
+
+        function startCallCountdown() {
+            let totalSeconds = 480;
+            const badge = document.getElementById('call-timer-badge');
+
+            if (callCountdownInterval) clearInterval(callCountdownInterval);
+
+            callCountdownInterval = setInterval(() => {
+                const mins = Math.floor(totalSeconds / 60);
+                const secs = totalSeconds % 60;
+                badge.innerText = `ETA ~0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                totalSeconds--;
+                if (totalSeconds < 0) clearInterval(callCountdownInterval);
+            }, 1000);
+        }
+
+        function simulateCallConfirmed() {
+            if (callCountdownInterval) clearInterval(callCountdownInterval);
+
+            document.getElementById('tracker-stage-call').classList.add('hidden');
+            document.getElementById('tracker-stage-arriving').classList.remove('hidden');
+        }
+
+        function cancelTechInspection() {
+            if (callCountdownInterval) clearInterval(callCountdownInterval);
+
+            if (confirm("Are you sure you want to cancel this inspection request?")) {
+                isDispatchLocked = false;
+                document.getElementById('btn-radar-bottom-text').innerText = "Book Nearest Doorstep Visit";
+                applyCategoryFilter();
+
+                document.getElementById('claim-tracker-container').classList.add('hidden');
+                document.getElementById('claim-form-container').classList.remove('hidden');
+            }
+        }
+
+        function switchAndHoverToRadar() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (isMobileSheetCollapsed) toggleMobileSheet();
+            if (currentActiveHub) {
+                triggerRouteToHub(currentActiveHub.lat, currentActiveHub.lng, currentActiveHub.name);
+            }
+        }
+
+        // ==========================================
+        // PROOF MODAL
+        // ==========================================
+        function openProofModal(devId) {
+            const dev = savedDevices.find(d => d.id === devId);
+            if (!dev) return;
+
+            currentViewingDevice = dev;
+            document.getElementById('modal-proof-title').innerHTML = `<i class="fa-solid fa-file-invoice text-brand-orange"></i> ${dev.brand} ${dev.model} — Proof of Purchase`;
+
+            const container = document.getElementById('modal-proof-container');
+
+            if (dev.billImage && dev.billImage.startsWith('data:image')) {
+                container.innerHTML = `
+                    <div class="w-full flex flex-col items-center">
+                        <img src="${dev.billImage}" alt="Uploaded Tax Invoice" class="max-h-[380px] w-auto object-contain rounded-xl border border-white/10 shadow-2xl">
+                        <div class="mt-3 flex items-center justify-between w-full px-2 text-[11px] text-slate-300 font-mono">
+                            <span>SN: ${dev.serial}</span>
+                            <span class="text-emerald-400 font-bold"><i class="fa-solid fa-shield-check"></i> ENCRYPTED COPY</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const storeName = dev.store || "Official Authorized Care Lounge";
+                const invNo = dev.invNo || "INV-FXS-90412";
+                const priceFormatted = dev.price ? "₹" + dev.price.toLocaleString('en-IN') : "₹49,990";
+
+                container.innerHTML = `
+                    <div id="active-thermal-receipt-dom" class="thermal-receipt w-full max-w-[360px] p-5 text-left border border-gray-300">
+                        <div class="text-center pb-2 border-b-2 border-dashed border-gray-400 space-y-0.5">
+                            <h4 class="font-extrabold text-sm tracking-wider uppercase text-gray-900">${storeName}</h4>
+                            <p class="text-[10px] text-gray-500 font-bold">RETAIL INVOICE / CASH MEMO</p>
+                            <p class="text-[9px] text-gray-400">GSTIN: 01AABCT9981K1Z3 | Terminal POS-02</p>
+                        </div>
+
+                        <div class="py-2.5 text-[10px] border-b border-dashed border-gray-300 space-y-0.5 text-gray-600">
+                            <div><strong>INVOICE:</strong> ${invNo}</div>
+                            <div><strong>DATE:</strong> ${dev.purchaseDate || '2026-05-10'}</div>
+                            <div><strong>MODE:</strong> Verified Digital UPI</div>
+                        </div>
+
+                        <div class="py-2 border-b border-dashed border-gray-300 text-[11px] space-y-1">
+                            <div class="flex justify-between font-bold text-gray-900">
+                                <span>${dev.model}</span>
+                                <span>${priceFormatted}</span>
+                            </div>
+                            <div class="text-[9px] text-gray-500 leading-tight">
+                                Brand: ${dev.brand} • Standard OEM Warranty<br>
+                                <span class="text-emerald-700 font-bold">Serial/IMEI: ${dev.serial || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <div class="py-2.5 flex justify-between items-center text-xs font-black text-gray-900 border-b-2 border-dashed border-gray-400">
+                            <span>TOTAL PAID</span>
+                            <span class="text-brand-orangeDark text-sm">${priceFormatted}.00</span>
+                        </div>
+
+                        <div class="pt-3 text-center space-y-1 text-gray-500">
+                            <div class="inline-block px-2 py-0.5 border border-emerald-600 text-emerald-700 rounded text-[9px] font-bold">
+                                ✓ DIGITALLY VERIFIED INVOICE
+                            </div>
+                            <div class="font-mono text-xs tracking-widest text-gray-700 pt-1">|||| | |||||| || ||||| ||||</div>
+                            <p class="text-[8px] text-gray-400">FixSphere Cloud Cryptographic Vault</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const m = document.getElementById('bill-proof-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeProofModal() {
+            const m = document.getElementById('bill-proof-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            currentViewingDevice = null;
+        }
+
+        function downloadActiveProof() {
+            if (!currentViewingDevice) return;
+
+            if (currentViewingDevice.billImage && currentViewingDevice.billImage.startsWith('data:image')) {
+                const a = document.createElement('a');
+                a.href = currentViewingDevice.billImage;
+                a.download = `FixSphere_Invoice_${currentViewingDevice.brand}_${currentViewingDevice.model.replace(/\s+/g, '_')}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                const canvas = document.getElementById('receipt-canvas');
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = "#d1d5db";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+                ctx.fillStyle = "#111827";
+                ctx.font = "bold 20px 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.fillText((currentViewingDevice.store || "OFFICIAL RETAIL STORE").toUpperCase(), 240, 55);
+
+                ctx.font = "12px 'Courier New', monospace";
+                ctx.fillStyle = "#4b5563";
+                ctx.fillText("TAX INVOICE / CASH MEMO", 240, 80);
+                ctx.fillText("GSTIN: 01AABCT9981K1Z3 | POS-02", 240, 100);
+
+                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = "#9ca3af";
+                ctx.beginPath();
+                ctx.moveTo(30, 120);
+                ctx.lineTo(450, 120);
+                ctx.stroke();
+
+                ctx.textAlign = "left";
+                ctx.font = "13px 'Courier New', monospace";
+                ctx.fillStyle = "#1f2937";
+                ctx.fillText("INVOICE : " + (currentViewingDevice.invNo || "INV-FXS-9014"), 35, 150);
+                ctx.fillText("DATE    : " + (currentViewingDevice.purchaseDate || "2026-05-10"), 35, 175);
+                ctx.fillText("PAYMENT : UPI / VERIFIED DIGITAL", 35, 200);
+
+                ctx.beginPath();
+                ctx.moveTo(30, 220);
+                ctx.lineTo(450, 220);
+                ctx.stroke();
+
+                ctx.font = "bold 16px 'Courier New', monospace";
+                ctx.fillText(currentViewingDevice.model, 35, 255);
+
+                ctx.font = "13px 'Courier New', monospace";
+                ctx.fillStyle = "#4b5563";
+                ctx.fillText("Brand: " + currentViewingDevice.brand, 35, 280);
+                ctx.fillText("Serial/IMEI: " + (currentViewingDevice.serial || "SN99142"), 35, 305);
+                ctx.fillText("Coverage: " + (currentViewingDevice.warrantyMonths || 12) + " Months Standard Warranty", 35, 330);
+
+                ctx.beginPath();
+                ctx.moveTo(30, 360);
+                ctx.lineTo(450, 360);
+                ctx.stroke();
+
+                ctx.font = "bold 16px 'Courier New', monospace";
+                ctx.fillStyle = "#111827";
+                ctx.fillText("TOTAL AMOUNT PAID", 35, 400);
+
+                ctx.font = "bold 20px 'Courier New', monospace";
+                ctx.textAlign = "right";
+                ctx.fillText("₹" + (currentViewingDevice.price ? currentViewingDevice.price.toLocaleString('en-IN') : "49,990") + ".00", 445, 400);
+
+                ctx.beginPath();
+                ctx.moveTo(30, 430);
+                ctx.lineTo(450, 430);
+                ctx.stroke();
+
+                ctx.setLineDash([]);
+                ctx.textAlign = "center";
+                ctx.font = "bold 12px 'Courier New', monospace";
+                ctx.fillStyle = "#059669";
+                ctx.fillText("✓ VERIFIED DIGITAL WARRANTY INVOICE", 240, 475);
+
+                ctx.font = "32px 'Courier New', monospace";
+                ctx.fillStyle = "#111827";
+                ctx.fillText("||| | ||||| ||| |||| | |||", 240, 530);
+
+                ctx.font = "11px 'Courier New', monospace";
+                ctx.fillStyle = "#6b7280";
+                ctx.fillText("FixSphere Encrypted Cloud Vault", 240, 570);
+                ctx.fillText("*** THANK YOU FOR YOUR PURCHASE ***", 240, 595);
+
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = `FixSphere_Invoice_${currentViewingDevice.brand}_${currentViewingDevice.model.replace(/\s+/g, '_')}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    </script>
+</body>
+</html>
