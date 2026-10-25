@@ -1,20 +1,23 @@
 <div align="center">
 
 <a href="https://fixsphere.netlify.app">
-  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=28&duration=3000&pause=1000&color=FF6B00&center=true&vCenter=true&width=900&height=55&lines=FIXSPHERE+%E2%80%94+AUTONOMOUS+DEVICE+CARE;10KM+HYPERLOCAL+REPAIR+RADAR+%26+VAULT" alt="FixSphere Header" />
+  <img src="https://demolab.com" alt="FixSphere Header" />
 </a>
 
- ███████╗ ██╗ ███╗  ██╗  ███████ ╗██████╗  ██╗  ██╗ ███████╗ ██████╗  ███████╗
- ██╔════╝ ██║ ╚██╗██╔╝ ██╔════╝   ██╔══██╗ ██║  ██║ ██╔════╝ ██╔══██╗ ██╔════╝
- █████╗   ██║  ╚████╔╝  ███████╗  ██████╔╝ ███████║ █████╗   ██████╔╝ █████╗  
- ██╔══╝   ██║  ██╔██╗   ╚════██║  ██╔═══╝  ██╔══██║ ██╔══╝   ██╔══██╗ ██╔══╝  
- ██║      ██║ ██╔╝ ██╗ ███████║   ██║      ██║  ██║ ███████╗ ██║  ██║ ███████╗
-
-
+<pre>
+███████╗██╗██╗  ██╗███████╗██████╗ ██╗  ██╗███████╗██████╗ ███████╗
+██╔════╝██║╚██╗██╔╝██╔════╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔════╝
+█████╗  ██║ ╚███╔╝ ███████╗██████╔╝███████║█████╗  ██████╔╝█████╗  
+██╔══╝  ██║ ██╔██╗ ╚════██║██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗██╔══╝  
+██║     ██║██╔╝ ██╗███████║██║     ██║  ██║███████╗██║  ██║███████╗
+╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
+</pre>
 
 <a href="https://fixsphere.netlify.app">
-  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=15&duration=2400&pause=600&color=10B981&center=true&vCenter=true&width=900&height=32&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+EXTRACTING+IMEI...;%3E+DOORSTEP+DISPATCH%3A+INR+49+BASE+%2B+INR+15%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Terminal Telemetry" />
+  <img src="https://demolab.com" alt="Terminal Telemetry" />
 </a>
+
+</div>
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=fixsphere-prod&label=REPO%20VIEWS&color=ff6b00&style=flat-square" alt="Views" />
