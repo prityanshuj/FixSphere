@@ -4,8 +4,6 @@
   <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=28&duration=3000&pause=1000&color=FF6B00&center=true&vCenter=true&width=900&height=55&lines=FIXSPHERE+%E2%80%94+AUTONOMOUS+DEVICE+CARE;10KM+HYPERLOCAL+REPAIR+RADAR+%26+VAULT" alt="FixSphere Header" />
 </a>
 
-</div>
-
  ███████╗██╗██╗  ██╗███████╗██████╗ ██╗  ██╗███████╗██████╗ ███████╗
  ██╔════╝███║╚██╗██╔╝██╔════╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔════╝
  █████╗  ██║ ╚████╔╝ ███████╗██████╔╝███████║█████╗  ██████╔╝█████╗  
