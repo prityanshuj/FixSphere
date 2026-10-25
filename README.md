@@ -1,6 +1,7 @@
-<p align="center">
-  <img src="https://demolab.com" alt="FixSphere Header" />
-</p>
+<div align="center">
+
+# 🛰️ FIXSPHERE
+### ⚡ AUTONOMOUS DEVICE CARE & SMART WARRANTY VAULT ⚡
 
 ```text
 ███████╗██╗██╗  ██╗███████╗██████╗ ██╗  ██╗███████╗██████╗ ███████╗
@@ -11,40 +12,22 @@
 ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
 ```
 
-<p align="center">
-  <img src="https://demolab.com" alt="Terminal Telemetry" />
-</p>
-
-<p align="center">
-  <img src="https://komarev.com" alt="Views" />
-  <img src="https://shields.io" alt="Build" />
-  <img src="https://shields.io" alt="OCR" />
-  <img src="https://shields.io" alt="Radar" />
-</p>
-
-<p align="center">
-  <a href="https://fixsphere.netlify.app" target="_blank">
-    <img src="https://shields.io" alt="Launch Live App" />
-  </a>
-  <a href="#features">
-    <img src="https://shields.io" alt="Features" />
-  </a>
-  <a href="#architecture">
-    <img src="https://shields.io" alt="Architecture" />
-  </a>
-  <a href="#tech-stack">
-    <img src="https://shields.io" alt="Tech Stack" />
-  </a>
-  <a href="#team">
-    <img src="https://shields.io" alt="Team" />
-  </a>
-</p>
-
-<p align="center">
-  <em>Bringing <b>Zomato & Rapido-style</b> hyperlocal doorstep convenience to electronics repair and warranty management.</em>
-</p>
+`> INITIALIZING 10KM HYPERLOCAL GPS RADAR...`  
+`> NEURAL VISION OCR (TESSERACT.JS) EXTRACTING IMEI...`  
+`> DOORSTEP DISPATCH: INR 49 BASE + INR 15/KM ACTIVE...`  
+`> SHA-256 CRYPTOGRAPHIC WARRANTY VAULT SECURED`  
 
 ---
+
+### [🚀 LAUNCH LIVE PROTOTYPE](https://fixsphere.netlify.app)
+
+**[✨ Features](#features) • [🌐 Architecture](#architecture) • [🛠️ Tech Stack](#tech-stack) • [👥 Team](#team)**
+
+---
+
+*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*
+
+</div>
 
 ## Features
 
