@@ -71,8 +71,8 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 ## Team
 
 - **Priyanshu Jasrotia** (Lead Developer) — [GitHub Profile](https://github.com/prityanshuj)
-- **Akriti** (Presentation & Strategy) — [GitHub Profile](https://github.com)
-- **Aman Kumar** (Documentation & Testing) — [GitHub Profile](https://github.com)
+- **Akriti** (Pitch & Demo Video) — [GitHub Profile](https://github.com)
+- **Aman Kumar** (Design & Testing) — [GitHub Profile](https://github.com)
 
 ---
 
