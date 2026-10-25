@@ -46,8 +46,6 @@
 
 *Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*
 
-</div>
-
 ---
 
 ## Features
@@ -63,8 +61,9 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 
 ## Architecture
 
-~~~rust
+```rust
  ____________________________________________________________________________________
+
 |                                                                                    |
 |   .---------.        .--------------.        .-------------.           __          |
 |   | "PAPER" |  ===>  |  NEURAL_OCR  |  ===>  |  10KM_RADAR |  ===>   _ \<_         |
@@ -73,7 +72,7 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 |        |                    |                       |                  |           |
 |   [Snap Photo]       [Extracts IMEI]         [Category Match]   [49 + 15/km Fee]   |
 |____________________________________________________________________________________|
-~~~
+```
 
 ---
 
