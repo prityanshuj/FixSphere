@@ -1,33 +1,40 @@
 <div align="center">
 
-<!-- ANIMATED MAIN TITLE SVG (100% WORKING ON GITHUB) -->
 <a href="https://fixsphere.netlify.app">
-  <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=800&size=34&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&repeat=true&width=850&height=60&lines=%E2%9A%A1+FIXSPHERE+%E2%80%94+AUTONOMOUS+DEVICE+CARE;%F0%9F%9B%B0%EF%B8%8F+10KM+HYPERLOCAL+REPAIR+RADAR+%26+VAULT" alt="FixSphere Animated Title" />
+  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=28&duration=3000&pause=1000&color=FF6B00&center=true&vCenter=true&width=900&height=55&lines=FIXSPHERE+%E2%80%94+AUTONOMOUS+DEVICE+CARE;10KM+HYPERLOCAL+REPAIR+RADAR+%26+VAULT" alt="FixSphere Header" />
 </a>
 
-<!-- DENSE SYMBOL-SHADED ASCII ART (RADAR SPHERE + 3D SHADED LOGO) -->
-<pre align="center">
-+======================================================================================+
-|  . : * # @ # * : .     .:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::. |
-| . * #@@@@@@@@@# * .    :  @@@@@@ @@ @@  @@  @@@@@ @@@@@  @@  @@ @@@@@@ @@@@@  @@@@@@ |
-| : #@@@%*+:+*%@@@# :    :  @@..   @@ .@@@@. @@...  @@..@@ @@  @@ @@..   @@..@@ @@..   |
-| * @@%+  .:.  +%@@ *    :  @@@@@  @@   @@    @@@@. @@@@@. @@@@@@ @@@@@  @@@@@. @@@@@  |
-| # @%: .:*#*:. :%@ #    :  @@..   @@ .@@@@. ....@@ @@...  @@..@@ @@..   @@.@@  @@..   |
-| @ @*  *@@+@@*  *@ @    :  @@     @@ @@  @@ @@@@@. @@     @@  @@ @@@@@@ @@  @@ @@@@@@ |
-| # @%: ':*#*:' :%@ #    :  ''     '' ''  '' '''''  ''     ''  '' '''''' ''  '' '''''' |
-| * @@%+  ':'  +%@@ *    ':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::' |
-| : #@@@%*+:+*%@@@# :      [10KM GPS RADAR]  ::  [NEURAL OCR]  ::  [DOORSTEP TECH]     |
-| ' * #@@@@@@@@@# * '      +-------------------------------------------------------+   |
-|  ' : * # @ # * : '       |  STATUS: ONLINE  |  LATENCY: 0.02s  |  VAULT: SHA-256 |   |
-+======================================================================================+
-</pre>
+</div>
 
-<!-- DYNAMIC MOVING TERMINAL TELEMETRY -->
+~~~rust
+/*  .  ·  .  *  .  ·  .  [ 10KM SATELLITE RADAR & NEURAL VAULT ]  .  ·  .  *  .  ·  */
+/*        .  ·       . : : - - = = + + * * # # * * + + = = - - : : .       ·  .     */
+/*     *          . : - = + * # % @ WW@88@MM@88@WW @ % # * + = - : .          *  .# */
+/*              : - + * # @ WW@88@00#oo#00@88@WW@88@MM @ # * + - :          .# % @W */
+/*   ·        : = * # @ WW@88#oo+::+oo#00@88@00#xx#00@88@WW @ # * = :     .# % @W88 */
+/*          : + # @ WW@88#o+:  /*..*/  :+o#88#o+:  /*..*/  :+o@WW @ # + : # % @W88* */
+/*        . = # @ WW@00+:. /*..::--::..*/ .:+00+:. /*..::..*/ .:@WW @ # = % @W88*+  */
+/*       . * # @ MM@88: /*.::=++*##*++=::.*/ :88: /*.::=++=:.*/ :@MM @ # @W88*+:.   */
+/*  ---===+# @ WW@88*o: /*.:+*#@@WW@@#*+:.*/ :00: /*.:+*#@@#+:.*/ *88@WW@88*+:.===--*/
+/*       : * # @ MM@00: /*.:+#@WW88WW@#+:.*/ :@@: /*.:+#@WW@+:.*/ :00@MM#00: .      */
+/*  ====>>+# @ WW@88*o: /*.:+*#@@WW@@#*+:.*/ :00: /*.:+*#@@#+:.*/ *88@WW@88*+<<==== */
+/*       ' * # @ MM@88: /*.::=++*##*++=::.*/ :88: /*.::=++=:.*/ :@MM @ # * '        */
+/*        ' = # @ WW@00+:. /*..::--::..*/ .:+00+:. /*..::..*/ .:@WW @ # = '         */
+/*    .# % @W88*+ # @ WW@88#o+:  /*..*/  :+o#88#o+:  /*..*/  :+o@WW @ # + :         */
+/*  .# % @W88*+:. = * # @ WW@88#oo+::+oo#00@88@00#xx#00@88@WW @ # * = :        ·    */
+/* # % @W88*+:.     : - + * # @ WW@88@00#oo#00@88@WW@88@MM @ # * + - :              */
+/* % @W88*+:.     *     . : - = + * # % @ WW@88@MM @ % # * + = - : .          *     */
+/*  .  ·  .  *  .          . : : - - = = + + * * + + = = - - : : .       .  ·  .    */
+/* ================================================================================ */
+   "SYSTEM: ONLINE"  |  RADAR_RADIUS: 10_KM  |  DISPATCH_FEE: 49 + 15/KM  |  OCR: v5
+~~~
+
+<div align="center">
+
 <a href="https://fixsphere.netlify.app">
-  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=16&duration=2200&pause=600&color=FF6B00&center=true&vCenter=true&width=750&height=35&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+EXTRACTING+IMEI...;%3E+DOORSTEP+DISPATCH%3A+%E2%82%B949+BASE+%2B+%E2%82%B915%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Terminal Telemetry" />
+  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=15&duration=2400&pause=600&color=10B981&center=true&vCenter=true&width=900&height=32&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+EXTRACTING+IMEI...;%3E+DOORSTEP+DISPATCH%3A+INR+49+BASE+%2B+INR+15%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Terminal Telemetry" />
 </a>
 
-<!-- LIVE STATUS & PROFILE BADGES -->
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=fixsphere-prod&label=REPO%20VIEWS&color=ff6b00&style=flat-square" alt="Views" />
   <img src="https://img.shields.io/badge/BUILD-PASSING-10b981?style=flat-square&logo=githubactions&logoColor=white" alt="Build" />
@@ -35,7 +42,6 @@
   <img src="https://img.shields.io/badge/RADAR_RADIUS-10_KM-f59e0b?style=flat-square" alt="Radar" />
 </p>
 
-<!-- WORKING NAVIGATION & LIVE LAUNCH BUTTONS -->
 <p align="center">
   <a href="https://fixsphere.netlify.app" target="_blank">
     <img src="https://img.shields.io/badge/%F0%9F%9A%80_LAUNCH_LIVE_PROTOTYPE-FF6B00?style=for-the-badge&logoColor=white" alt="Launch Live App" />
@@ -54,7 +60,7 @@
   </a>
 </p>
 
-*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*[cite: 14]
+*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*
 
 </div>
 
@@ -73,19 +79,17 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 
 ## Architecture
 
-<div align="center">
-<pre align="center">
+~~~rust
  ____________________________________________________________________________________
 |                                                                                    |
 |   .---------.        .--------------.        .-------------.           __          |
-|   |  PAPER  |  ===>  |  NEURAL OCR  |  ===>  |  10KM GPS   |  ===>   _ \<_         |
-|   | INVOICE |        | (TESSERACT)  |        |  RADAR HUB  |        (_)/(_)        |
-|   '---------'        '--------------'        '-------------'     DOORSTEP TECH     |
+|   | "PAPER" |  ===>  |  NEURAL_OCR  |  ===>  |  10KM_RADAR |  ===>   _ \<_         |
+|   | INVOICE |        | (TESSERACT)  |        |  HUB_ENGINE |        (_)/(_)        |
+|   '---------'        '--------------'        '-------------'     DOORSTEP_TECH     |
 |        |                    |                       |                  |           |
-|   [Snap Photo]       [Extracts IMEI]         [Category Match]   [₹49 + ₹15/km]     |
+|   [Snap Photo]       [Extracts IMEI]         [Category Match]   [49 + 15/km Fee]   |
 |____________________________________________________________________________________|
-</pre>
-</div>
+~~~
 
 ---
 
