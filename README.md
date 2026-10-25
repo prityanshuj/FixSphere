@@ -6,15 +6,15 @@
 
 </div>
 
-
-
-<div >
-
  ███████╗██╗██╗  ██╗███████╗██████╗ ██╗  ██╗███████╗██████╗ ███████╗
  ██╔════╝███║╚██╗██╔╝██╔════╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔════╝
  █████╗  ██║ ╚████╔╝ ███████╗██████╔╝███████║█████╗  ██████╔╝█████╗  
  ██╔══╝  ██║ ██╔██╗  ╚════██║██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗██╔══╝  
  ██║     ██║██╔╝ ██╗███████║██║     ██║  ██║███████╗██║  ██║███████╗
+
+<div >
+
+
 <a href="https://fixsphere.netlify.app">
   <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=15&duration=2400&pause=600&color=10B981&center=true&vCenter=true&width=900&height=32&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+EXTRACTING+IMEI...;%3E+DOORSTEP+DISPATCH%3A+INR+49+BASE+%2B+INR+15%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Terminal Telemetry" />
 </a>
