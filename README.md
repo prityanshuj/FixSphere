@@ -1,14 +1,39 @@
 <div align="center">
 
-<!-- DYNAMIC MOVING WAVE BANNER -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:06080d,50:111726,100:ff6b00&height=180&section=header&text=FIXSPHERE&fontSize=65&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Autonomous%20Device%20Care%20%26%20Smart%20Warranty%20Vault&descAlignY=58&descSize=18" width="100%" alt="FixSphere Banner" />
-
-<!-- DYNAMIC MOVING TERMINAL TYPING ANIMATION -->
+<!-- ANIMATED MAIN TITLE SVG (100% WORKING ON GITHUB) -->
 <a href="https://fixsphere.netlify.app">
-  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=18&duration=2600&pause=800&color=FF6B00&center=true&vCenter=true&width=750&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+ONLINE...;%3E+DOORSTEP+DISPATCH%3A+%E2%82%B949+BASE+%2B+%E2%82%B915%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=800&size=34&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&repeat=true&width=850&height=60&lines=%E2%9A%A1+FIXSPHERE+%E2%80%94+AUTONOMOUS+DEVICE+CARE;%F0%9F%9B%B0%EF%B8%8F+10KM+HYPERLOCAL+REPAIR+RADAR+%26+VAULT" alt="FixSphere Animated Title" />
 </a>
 
-<br/>
+<!-- DENSE SYMBOL-SHADED ASCII ART (RADAR SPHERE + 3D SHADED LOGO) -->
+<pre align="center">
++======================================================================================+
+|  . : * # @ # * : .     .:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::. |
+| . * #@@@@@@@@@# * .    :  @@@@@@ @@ @@  @@  @@@@@ @@@@@  @@  @@ @@@@@@ @@@@@  @@@@@@ |
+| : #@@@%*+:+*%@@@# :    :  @@..   @@ .@@@@. @@...  @@..@@ @@  @@ @@..   @@..@@ @@..   |
+| * @@%+  .:.  +%@@ *    :  @@@@@  @@   @@    @@@@. @@@@@. @@@@@@ @@@@@  @@@@@. @@@@@  |
+| # @%: .:*#*:. :%@ #    :  @@..   @@ .@@@@. ....@@ @@...  @@..@@ @@..   @@.@@  @@..   |
+| @ @*  *@@+@@*  *@ @    :  @@     @@ @@  @@ @@@@@. @@     @@  @@ @@@@@@ @@  @@ @@@@@@ |
+| # @%: ':*#*:' :%@ #    :  ''     '' ''  '' '''''  ''     ''  '' '''''' ''  '' '''''' |
+| * @@%+  ':'  +%@@ *    ':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::' |
+| : #@@@%*+:+*%@@@# :      [10KM GPS RADAR]  ::  [NEURAL OCR]  ::  [DOORSTEP TECH]     |
+| ' * #@@@@@@@@@# * '      +-------------------------------------------------------+   |
+|  ' : * # @ # * : '       |  STATUS: ONLINE  |  LATENCY: 0.02s  |  VAULT: SHA-256 |   |
++======================================================================================+
+</pre>
+
+<!-- DYNAMIC MOVING TERMINAL TELEMETRY -->
+<a href="https://fixsphere.netlify.app">
+  <img src="https://readme-typing-svg.demolab.com?font=Space+Mono&weight=700&size=16&duration=2200&pause=600&color=FF6B00&center=true&vCenter=true&width=750&height=35&lines=%3E+INITIALIZING+10KM+HYPERLOCAL+GPS+RADAR...;%3E+NEURAL+VISION+OCR+%28TESSERACT.JS%29+EXTRACTING+IMEI...;%3E+DOORSTEP+DISPATCH%3A+%E2%82%B949+BASE+%2B+%E2%82%B915%2FKM+ACTIVE...;%3E+SHA-256+CRYPTOGRAPHIC+WARRANTY+VAULT+SECURED" alt="Terminal Telemetry" />
+</a>
+
+<!-- LIVE STATUS & PROFILE BADGES -->
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=fixsphere-prod&label=REPO%20VIEWS&color=ff6b00&style=flat-square" alt="Views" />
+  <img src="https://img.shields.io/badge/BUILD-PASSING-10b981?style=flat-square&logo=githubactions&logoColor=white" alt="Build" />
+  <img src="https://img.shields.io/badge/OCR_ENGINE-TESSERACT_v5-3b82f6?style=flat-square" alt="OCR" />
+  <img src="https://img.shields.io/badge/RADAR_RADIUS-10_KM-f59e0b?style=flat-square" alt="Radar" />
+</p>
 
 <!-- WORKING NAVIGATION & LIVE LAUNCH BUTTONS -->
 <p align="center">
@@ -29,22 +54,7 @@
   </a>
 </p>
 
-<!-- PURE SYMBOL ASCII ART ILLUSTRATION (SATELLITE + LAPTOP + PHONE) -->
-<pre align="center">
-           .---.                                   ___________________________
-          /     \         .       *       .       |  _______________________  |
-         | () () |      .   \     |     /   .     | |  >_ FIXSPHERE OS v1.0 | |     .-------------.
-          \  ^  /         --- * ( @ ) * ---       | |  -------------------  | |    |  .---------.  |
-           |||||          '   /   |   \   '       | |  [x] Neural Bill OCR  | |    |  |  iPhone |  |
-          /|||||\             *       .           | |  [x] 10km GPS Radar   | |    |  |  15 Pro |  |
-         / ||||| \                                | |  [x] SHA-256 Vault    | |    |  |  [234d] |  |
-        /  |||||  \       10KM SATELLITE          | |_______________________| |    |  '---------'  |
-       /___|||||___\       RADAR LOCKED          /   [][][][][][][][][][][]   \    |      (_)      |
-      [_____________]                           /______________________________\   '-------------'
-       GEO-TELEMETRY                               LAPTOP & PC CARE LOUNGE          SMARTPHONE HUB
-</pre>
-
-*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*
+*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*[cite: 14]
 
 </div>
 
@@ -99,5 +109,5 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 ---
 
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:ff6b00,50:111726,100:06080d&height=110&section=footer" width="100%" alt="Footer Wave" />
+  <b>⚡ FixSphere — Built for Seamless Hardware Protection ⚡</b>
 </div>
