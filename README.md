@@ -1,50 +1,48 @@
-<div align="center">
-
-<a href="https://fixsphere.netlify.app">
+<p align="center">
   <img src="https://demolab.com" alt="FixSphere Header" />
-</a>
+</p>
 
-<pre>
+```text
 ███████╗██╗██╗  ██╗███████╗██████╗ ██╗  ██╗███████╗██████╗ ███████╗
 ██╔════╝██║╚██╗██╔╝██╔════╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔════╝
 █████╗  ██║ ╚███╔╝ ███████╗██████╔╝███████║█████╗  ██████╔╝█████╗  
 ██╔══╝  ██║ ██╔██╗ ╚════██║██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗██╔══╝  
 ██║     ██║██╔╝ ██╗███████║██║     ██║  ██║███████╗██║  ██║███████╗
 ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
-</pre>
-
-<a href="https://fixsphere.netlify.app">
-  <img src="https://demolab.com" alt="Terminal Telemetry" />
-</a>
-
-</div>
+```
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=fixsphere-prod&label=REPO%20VIEWS&color=ff6b00&style=flat-square" alt="Views" />
-  <img src="https://img.shields.io/badge/BUILD-PASSING-10b981?style=flat-square&logo=githubactions&logoColor=white" alt="Build" />
-  <img src="https://img.shields.io/badge/OCR_ENGINE-TESSERACT_v5-3b82f6?style=flat-square" alt="OCR" />
-  <img src="https://img.shields.io/badge/RADAR_RADIUS-10_KM-f59e0b?style=flat-square" alt="Radar" />
+  <img src="https://demolab.com" alt="Terminal Telemetry" />
+</p>
+
+<p align="center">
+  <img src="https://komarev.com" alt="Views" />
+  <img src="https://shields.io" alt="Build" />
+  <img src="https://shields.io" alt="OCR" />
+  <img src="https://shields.io" alt="Radar" />
 </p>
 
 <p align="center">
   <a href="https://fixsphere.netlify.app" target="_blank">
-    <img src="https://img.shields.io/badge/%F0%9F%9A%80_LAUNCH_LIVE_PROTOTYPE-FF6B00?style=for-the-badge&logoColor=white" alt="Launch Live App" />
+    <img src="https://shields.io" alt="Launch Live App" />
   </a>
   <a href="#features">
-    <img src="https://img.shields.io/badge/FEATURES-111726?style=for-the-badge&logo=sparkles&logoColor=ff6b00" alt="Features" />
+    <img src="https://shields.io" alt="Features" />
   </a>
   <a href="#architecture">
-    <img src="https://img.shields.io/badge/ARCHITECTURE-111726?style=for-the-badge&logo=serverless&logoColor=3b82f6" alt="Architecture" />
+    <img src="https://shields.io" alt="Architecture" />
   </a>
   <a href="#tech-stack">
-    <img src="https://img.shields.io/badge/TECH_STACK-111726?style=for-the-badge&logo=javascript&logoColor=10b981" alt="Tech Stack" />
+    <img src="https://shields.io" alt="Tech Stack" />
   </a>
   <a href="#team">
-    <img src="https://img.shields.io/badge/TEAM-111726?style=for-the-badge&logo=github&logoColor=ffffff" alt="Team" />
+    <img src="https://shields.io" alt="Team" />
   </a>
 </p>
 
-*Bringing **Zomato & Rapido-style** hyperlocal doorstep convenience to electronics repair and warranty management.*
+<p align="center">
+  <em>Bringing <b>Zomato & Rapido-style</b> hyperlocal doorstep convenience to electronics repair and warranty management.</em>
+</p>
 
 ---
 
@@ -89,9 +87,9 @@ FixSphere eliminates traditional offline friction in electronics repair—from f
 
 ## Team
 
-- **Priyanshu Jasrotia** (Lead Developer) — [GitHub Profile](https://github.com/prityanshuj)
-- **Akriti** (Presentation & Strategy) — [GitHub Profile](https://github.com/)
-- **[Team Member 3]** (Documentation & Testing) — [GitHub Profile](https://github.com/)
+- **Priyanshu Jasrotia** (Lead Developer) — [GitHub Profile](https://github.com)
+- **Akriti** (Presentation & Strategy) — [GitHub Profile](https://github.com)
+- **[Team Member 3]** (Documentation & Testing) — [GitHub Profile](https://github.com)
 
 ---
 
